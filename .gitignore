@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+*.pyo
+*.pyd
+
+.venv/
+venv/
+
+exports/*
+!exports/.gitkeep
+data/demo_project/
+data/sample_project_seed123_b/
+
