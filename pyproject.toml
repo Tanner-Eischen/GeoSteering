@@ -1,12 +1,14 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "geosteering-workbench"
 version = "0.1.0"
-description = "Offline-first geosteering MVP workbench."
+description = "Local Streamlit application for geosteering practice with synthetic wells."
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.11"
 dependencies = [
   "streamlit>=1.40",

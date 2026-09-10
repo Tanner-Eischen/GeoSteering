@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from pathlib import Path
 
 from pypdf import PdfReader
@@ -90,7 +91,7 @@ def test_report_export_headless_and_sections(tmp_path: Path) -> None:
 def test_report_export_cli(tmp_path: Path) -> None:
     project_root = _setup_project_with_content(tmp_path)
     result = subprocess.run(
-        ["python", "-m", "tools.export_report", str(project_root)],
+        [sys.executable, "-m", "tools.export_report", str(project_root)],
         cwd=Path(__file__).resolve().parents[1],
         check=True,
         capture_output=True,

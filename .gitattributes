@@ -1,0 +1,2 @@
+data/sample_project/**/*.las linguist-vendored=true
+*.las text eol=lf linguist-detectable=false
