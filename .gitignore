@@ -8,12 +8,15 @@ __pycache__/
 
 .venv/
 venv/
+
+data/demo_project/
+output/
 build/
 dist/
 *.egg-info/
+data/case_studies/
 
-exports/*
-!exports/.gitkeep
-data/demo_project/
-data/sample_project_seed123_b/
+# Local imported project state and retained raw field-data assets.
+data/volve/project/
+data/volve/source/
 

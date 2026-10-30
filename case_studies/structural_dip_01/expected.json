@@ -1,0 +1,1 @@
+{"scenario_version":"structural_dip_01-v1","seed":123,"causal_comparison":{"hold":{"percent_in_zone":38.0716208,"evaluated_length_ft":5000.0,"dls_violation_count":0},"guided":{"percent_in_zone":97.1742657,"evaluated_length_ft":5000.0,"dls_violation_count":0}}}

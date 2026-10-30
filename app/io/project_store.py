@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any, Iterable, List, Sequence, TypeVar
+from typing import Any, List, Sequence, TypeVar
 
 import pandas as pd
 
@@ -48,22 +48,20 @@ def read_json(path: Path, default: Any | None = None) -> Any:
 
 def append_only_write(path: Path, new_items: Sequence[dict], key_fields: Sequence[str]) -> None:
     existing = read_json(path, default=[])
-    if len(new_items) < len(existing):
-        raise ValueError(f"Refusing to overwrite append-only file with fewer rows: {path}")
-    if existing:
-        existing_keys = {tuple(row[k] for k in key_fields) for row in existing}
-        for row in existing:
-            if tuple(row[k] for k in key_fields) not in existing_keys:
-                raise ValueError(f"Corrupt append-only data in {path}")
-        for row in existing:
-            row_key = tuple(row[k] for k in key_fields)
-            if row_key not in {tuple(r[k] for k in key_fields) for r in new_items}:
-                raise ValueError(f"Refusing to silently delete append-only key {row_key} in {path}")
+    old_by_key = {tuple(row[k] for k in key_fields): row for row in existing}
+    new_by_key = {tuple(row[k] for k in key_fields): row for row in new_items}
+    if len(old_by_key) != len(existing) or len(new_by_key) != len(new_items):
+        raise ValueError(f"Duplicate append-only identifiers in {path}")
+    for key, row in old_by_key.items():
+        if new_by_key.get(key) != row:
+            raise ValueError(f"Refusing to alter or delete immutable history {key} in {path}")
     atomic_write_json(path, list(new_items))
 
 
 def create_project(root: str | Path, name: str) -> Project:
     root_path = Path(root)
+    if root_path.exists() and any(root_path.iterdir()):
+        raise FileExistsError(f"Project destination is not empty: {root_path}. Choose a new directory.")
     root_path.mkdir(parents=True, exist_ok=True)
     ensure_project_dirs(root_path)
     project = Project(name=name)

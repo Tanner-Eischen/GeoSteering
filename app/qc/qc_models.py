@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List
+from typing import List, Literal
 
 from pydantic import BaseModel, Field
 
@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 class QCWarning(BaseModel):
     code: str
     message: str
+    severity: Literal["warning", "error"] = "error"
 
 
 class WellQCResult(BaseModel):

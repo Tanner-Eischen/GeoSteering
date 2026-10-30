@@ -10,16 +10,36 @@ def _as_radians(series: pd.Series) -> np.ndarray:
     return np.deg2rad(series.to_numpy(dtype=float))
 
 
-def compute_trajectory(survey_df: pd.DataFrame) -> pd.DataFrame:
+def compute_trajectory(
+    survey_df: pd.DataFrame,
+    *,
+    initial_tvd_ft: float | None = None,
+    initial_north_ft: float = 0.0,
+    initial_east_ft: float = 0.0,
+) -> pd.DataFrame:
     required = {"md_ft", "inc_deg", "azi_deg"}
     missing = required - set(survey_df.columns)
     if missing:
         raise ValueError(f"Survey is missing required columns: {sorted(missing)}")
 
-    survey = survey_df.sort_values("md_ft").reset_index(drop=True).copy()
+    survey = survey_df.reset_index(drop=True).copy()
+    if survey.empty or not np.isfinite(survey[list(required)].to_numpy(dtype=float)).all():
+        raise ValueError("Survey stations must be nonempty and finite.")
     md = survey["md_ft"].to_numpy(dtype=float)
     inc = _as_radians(survey["inc_deg"])
     azi = _as_radians(survey["azi_deg"])
+    if md[0] < 0 or np.any(np.diff(md) <= 0):
+        raise ValueError("Survey MD must be nonnegative and strictly increasing.")
+    if np.any((survey["inc_deg"] < 0) | (survey["inc_deg"] > 180)):
+        raise ValueError("Inclination must be in [0, 180].")
+    if np.any((survey["azi_deg"] < 0) | (survey["azi_deg"] >= 360)):
+        raise ValueError("Azimuth must be in [0, 360).")
+    if initial_tvd_ft is None:
+        if md[0] != 0:
+            raise ValueError("A survey starting after MD zero requires an explicit TVD tie-in.")
+        initial_tvd_ft = 0.0
+    if not np.isfinite([initial_tvd_ft, initial_north_ft, initial_east_ft]).all():
+        raise ValueError("Survey tie-in coordinates must be finite.")
 
     n = len(survey)
     tvd = np.zeros(n, dtype=float)
@@ -27,6 +47,9 @@ def compute_trajectory(survey_df: pd.DataFrame) -> pd.DataFrame:
     east = np.zeros(n, dtype=float)
     dogleg_deg = np.zeros(n, dtype=float)
     dls = np.zeros(n, dtype=float)
+    tvd[0] = initial_tvd_ft
+    north[0] = initial_north_ft
+    east[0] = initial_east_ft
 
     for i in range(1, n):
         dm = md[i] - md[i - 1]
@@ -61,6 +84,7 @@ def compute_trajectory(survey_df: pd.DataFrame) -> pd.DataFrame:
     out["tvd_ft"] = tvd
     out["north_ft"] = north
     out["east_ft"] = east
+    out["x_ft"] = east
     out["dogleg_deg"] = dogleg_deg
     out["dls_deg_per_100ft"] = dls
     return out

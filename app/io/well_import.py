@@ -1,21 +1,25 @@
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 from typing import List
 from uuid import uuid4
 
 import pandas as pd
 
-from app.io.las_import import import_las
+from app.alg.trajectory_min_curve import compute_trajectory
+from app.io.las_import import read_las
 from app.io.project_store import (
     atomic_write_json,
     load_project,
+    read_json,
     save_project,
+    save_well,
     upsert_well_ref,
     well_paths,
 )
-from app.io.survey_import import import_survey
-from app.model.schemas import Marker, Well
+from app.io.survey_import import read_survey_csv
+from app.model.schemas import Marker, Well, WellReference
 from app.qc.qc_checks import run_well_qc
 
 
@@ -55,8 +59,16 @@ def import_well_folder(project_root: str | Path, well_folder: str | Path, well_n
     project = load_project(project_root)
     well_id = str(uuid4())
 
-    survey_df, trajectory_df = import_survey(project_root, well_id, survey_path)
-    logs_df, curve_inventory = import_las(project_root, well_id, logs_path)
+    reference_path = well_folder / "reference.json"
+    reference = WellReference.model_validate(read_json(reference_path)) if reference_path.exists() else None
+    survey_df = read_survey_csv(survey_path)
+    tie_in = {} if reference is None else {
+        "initial_tvd_ft": reference.initial_tvd_ft,
+        "initial_east_ft": reference.origin_east_ft,
+        "initial_north_ft": reference.origin_north_ft,
+    }
+    trajectory_df = compute_trajectory(survey_df, **tie_in)
+    logs_df, curve_inventory = read_las(logs_path)
     qc_result = run_well_qc(well_name=well_name, survey_df=survey_df, logs_df=logs_df, required_curves=["GR", "RES"])
     if not qc_result.valid:
         warnings = "; ".join(w.message for w in qc_result.warnings)
@@ -67,12 +79,18 @@ def import_well_folder(project_root: str | Path, well_folder: str | Path, well_n
     marker_rel = None
     if markers_path.exists():
         marker_models = read_markers_csv(markers_path)
-        atomic_write_json(paths["markers"], [m.model_dump(mode="json") for m in marker_models])
         marker_rel = str(paths["markers"].relative_to(project_root).as_posix())
+        if any(m.md_ft < survey_df.md_ft.min() or m.md_ft > survey_df.md_ft.max() for m in marker_models):
+            raise ValueError("Formation markers must lie within survey support.")
 
     well = Well(
         well_id=well_id,
         name=well_name,
+        reference=reference,
+        metadata={
+            "source_survey_sha256": hashlib.sha256(survey_path.read_bytes()).hexdigest(),
+            "source_logs_sha256": hashlib.sha256(logs_path.read_bytes()).hexdigest(),
+        },
         survey_path=str(paths["survey"].relative_to(project_root).as_posix()),
         trajectory_path=str(paths["trajectory"].relative_to(project_root).as_posix()),
         logs_path=str(paths["logs"].relative_to(project_root).as_posix()),
@@ -81,7 +99,9 @@ def import_well_folder(project_root: str | Path, well_folder: str | Path, well_n
         qc_summary=qc_result.model_dump(mode="json"),
     )
 
-    atomic_write_json(paths["well_json"], well.model_dump(mode="json"))
+    save_well(project_root, well, survey_df, trajectory_df, logs_df)
+    if marker_models:
+        atomic_write_json(paths["markers"], [m.model_dump(mode="json") for m in marker_models])
     upsert_well_ref(project, well_id=well_id, well_name=well_name)
     if project.active_well_id is None:
         project.active_well_id = well_id

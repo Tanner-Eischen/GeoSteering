@@ -1,21 +1,24 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Iterable, Sequence
 
 import pandas as pd
 
 from app.io.project_store import append_only_write, read_json
 from app.model.schemas import DecisionEntry, Recommendation
 from app.services.interpretations import get_interpretation_by_id
+from app.services.run_paths import run_root
+from app.services.run_transactions import recover_run
 
 
-def _path(project_root: str | Path) -> Path:
-    return Path(project_root) / "decisions" / "decisions.json"
+def _path(project_root: str | Path, run_id: str | None = None) -> Path:
+    return run_root(project_root, run_id) / "decisions" / "decisions.json"
 
 
-def load_decisions(project_root: str | Path) -> list[DecisionEntry]:
-    rows = read_json(_path(project_root), default=[])
+def load_decisions(project_root: str | Path, run_id: str | None = None) -> list[DecisionEntry]:
+    recover_run(run_root(project_root, run_id))
+    rows = read_json(_path(project_root, run_id), default=[])
     entries = [DecisionEntry.model_validate(r) for r in rows]
     return sorted(entries, key=lambda d: (d.step_index, d.created_at))
 
@@ -79,7 +82,7 @@ def export_decision_log_csv(
                 "step_index": d.step_index,
                 "md_from_ft": d.md_from_ft,
                 "md_to_ft": d.md_to_ft,
-                "revealed_md_ft": revealed_md_ft,
+                "revealed_md_ft": d.md_from_ft,
                 "curves_used": ",".join(curves_used or []),
                 "offsets_used": ",".join(offsets_used or []),
                 "interpretation_version_id": d.interpretation_version_id,

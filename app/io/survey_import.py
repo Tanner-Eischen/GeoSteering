@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from app.alg.trajectory_min_curve import compute_trajectory
@@ -17,10 +18,8 @@ def read_survey_csv(path: str | Path) -> pd.DataFrame:
         raise ValueError(f"Survey CSV {csv_path} missing columns: {sorted(missing)}")
 
     df = df[list(required)].copy()
-    df = df.sort_values("md_ft").reset_index(drop=True)
-
-    if df[["md_ft", "inc_deg", "azi_deg"]].isna().any().any():
-        raise ValueError(f"Survey CSV {csv_path} contains NaNs in required columns.")
+    if df.empty or not np.isfinite(df.to_numpy(dtype=float)).all():
+        raise ValueError(f"Survey CSV {csv_path} requires nonempty, finite numeric stations.")
     if not (df["md_ft"].diff().fillna(1.0) > 0).all():
         raise ValueError(f"Survey CSV {csv_path} must have strictly increasing md_ft.")
     if not ((df["inc_deg"] >= 0.0) & (df["inc_deg"] <= 180.0)).all():
@@ -30,9 +29,11 @@ def read_survey_csv(path: str | Path) -> pd.DataFrame:
     return df
 
 
-def import_survey(project_root: str | Path, well_id: str, survey_csv: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+def import_survey(
+    project_root: str | Path, well_id: str, survey_csv: str | Path, **tie_in: float
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     survey_df = read_survey_csv(survey_csv)
-    trajectory_df = compute_trajectory(survey_df)
+    trajectory_df = compute_trajectory(survey_df, **tie_in)
 
     paths = well_paths(project_root, well_id)
     paths["survey"].parent.mkdir(parents=True, exist_ok=True)

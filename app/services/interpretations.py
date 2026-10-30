@@ -5,14 +5,17 @@ from typing import Sequence
 
 from app.io.project_store import append_only_write, read_json
 from app.model.schemas import ControlPoint, InterpretationVersion, UncertaintyModel
+from app.services.run_paths import run_root
+from app.services.run_transactions import recover_run
 
 
-def _path(project_root: str | Path) -> Path:
-    return Path(project_root) / "interpretations" / "interpretations.json"
+def _path(project_root: str | Path, run_id: str | None = None) -> Path:
+    return run_root(project_root, run_id) / "interpretations" / "interpretations.json"
 
 
-def load_interpretations(project_root: str | Path) -> list[InterpretationVersion]:
-    rows = read_json(_path(project_root), default=[])
+def load_interpretations(project_root: str | Path, run_id: str | None = None) -> list[InterpretationVersion]:
+    recover_run(run_root(project_root, run_id))
+    rows = read_json(_path(project_root, run_id), default=[])
     return [InterpretationVersion.model_validate(r) for r in rows]
 
 
@@ -48,11 +51,11 @@ def create_baseline_interpretation(
     return baseline
 
 
-def get_latest_interpretation(project_root: str | Path) -> InterpretationVersion | None:
-    versions = load_interpretations(project_root)
+def get_latest_interpretation(project_root: str | Path, run_id: str | None = None) -> InterpretationVersion | None:
+    versions = load_interpretations(project_root, run_id)
     if not versions:
         return None
-    return sorted(versions, key=lambda v: v.created_at)[-1]
+    return max(versions, key=lambda v: v.created_at)
 
 
 def get_interpretation_by_id(project_root: str | Path, version_id: str) -> InterpretationVersion:

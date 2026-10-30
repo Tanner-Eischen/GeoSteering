@@ -20,8 +20,7 @@ def _depth_factor_to_feet(unit: str) -> float:
         return 1.0
     if u in {"m", "meter", "metre", "meters", "metres"}:
         return FT_PER_M
-    # Default to feet for unknown depth units in MVP.
-    return 1.0
+    raise ValueError(f"Unknown LAS depth unit {unit!r}; specify FT or M in the source header.")
 
 
 def _estimate_step(md_series: pd.Series) -> float:
@@ -49,7 +48,11 @@ def read_las(path: str | Path) -> tuple[pd.DataFrame, Dict[str, CurveMeta]]:
     if "GR" not in normalized.columns or "RES" not in normalized.columns:
         raise ValueError(f"LAS {las_path} must contain GR and one resistivity alias that maps to RES.")
 
-    normalized = normalized.sort_values("md_ft").reset_index(drop=True)
+    if normalized.empty or not np.isfinite(normalized["md_ft"].to_numpy(dtype=float)).all():
+        raise ValueError("LAS depths must be nonempty and finite.")
+    if not (normalized["md_ft"].diff().dropna() > 0).all():
+        raise ValueError("LAS measured depths must be unique and strictly increasing.")
+    normalized = normalized.reset_index(drop=True)
 
     units_by_curve = {str(c.mnemonic).upper(): str(c.unit or "") for c in las.curves}
     inventory: Dict[str, CurveMeta] = {}

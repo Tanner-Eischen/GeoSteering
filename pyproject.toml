@@ -9,17 +9,21 @@ description = "Local Streamlit application for geosteering practice with synthet
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
-  "streamlit>=1.40",
-  "plotly>=5.24",
-  "pandas>=2.2",
-  "numpy>=1.26",
-  "pydantic>=2.9",
-  "pyarrow>=17.0",
-  "lasio>=0.31",
-  "reportlab>=4.2",
-  "kaleido==0.2.1",
+  # Keep major versions bounded to reduce resolver conflicts.
+  "streamlit>=1.40,<2",
+  "plotly>=5.24,<7",
+  "pandas>=2.2,<3",
+  "numpy>=1.26,<3",
+  "pydantic>=2.9,<3",
+  "pyarrow>=17.0,<24",
+  "lasio>=0.31,<1",
+  "reportlab>=4.2,<5",
+  "matplotlib>=3.8,<4",
+  # Streamlit pulls protobuf constraints transitively, but pinning here avoids
+  # resolver conflicts in mixed environments.
+  "protobuf>=3.20,<7",
 ]
 
 [project.optional-dependencies]
@@ -29,7 +33,7 @@ test = [
 ]
 dev = [
   "ruff>=0.6.9",
-  "mypy>=1.11",
+  "build>=1.2",
 ]
 
 [tool.setuptools]
@@ -43,3 +47,10 @@ include = ["app*", "tools*"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-q"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]

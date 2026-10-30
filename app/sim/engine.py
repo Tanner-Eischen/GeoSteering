@@ -4,7 +4,7 @@ from app.sim.sim_models import SimulationConfig, SimulationState
 
 
 def initial_state(config: SimulationConfig) -> SimulationState:
-    return SimulationState(step_index=0, revealed_md_ft=config.start_md_ft, version_id_by_step=[], decision_id_by_step=[])
+    return SimulationState(run_id=config.run_id, step_index=0, revealed_md_ft=config.start_md_ft, version_id_by_step=[], decision_id_by_step=[])
 
 
 def step_forward(state: SimulationState, config: SimulationConfig) -> SimulationState:

@@ -11,18 +11,30 @@ def utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
-class ProjectSettings(BaseModel):
+class ScientificModel(BaseModel):
+    model_config = ConfigDict(allow_inf_nan=False)
+
+
+class WellReference(ScientificModel):
+    coordinate_system: Literal["LOCAL_EAST_NORTH_FT"] = "LOCAL_EAST_NORTH_FT"
+    vertical_datum: str = "LOCAL_TVD"
+    origin_east_ft: float = 0.0
+    origin_north_ft: float = 0.0
+    initial_tvd_ft: float | None = None
+
+
+class ProjectSettings(ScientificModel):
     depth_basis: Literal["MD_FT"] = "MD_FT"
     vertical_reference: Literal["TVD_FT"] = "TVD_FT"
     required_curves: List[str] = Field(default_factory=lambda: ["GR", "RES"])
 
 
-class WellRef(BaseModel):
+class WellRef(ScientificModel):
     well_id: str
     name: str
 
 
-class CurveMeta(BaseModel):
+class CurveMeta(ScientificModel):
     canonical_name: str
     original_mnemonics: List[str] = Field(default_factory=list)
     unit: str
@@ -31,10 +43,11 @@ class CurveMeta(BaseModel):
     depth_max_ft: float
 
 
-class Well(BaseModel):
+class Well(ScientificModel):
     well_id: str
     name: str
     metadata: Dict[str, Optional[str]] = Field(default_factory=dict)
+    reference: WellReference | None = None
     survey_path: str
     trajectory_path: str
     logs_path: str
@@ -43,7 +56,7 @@ class Well(BaseModel):
     qc_summary: Dict[str, object] = Field(default_factory=dict)
 
 
-class Project(BaseModel):
+class Project(ScientificModel):
     model_config = ConfigDict(validate_assignment=True)
 
     project_id: str = Field(default_factory=lambda: str(uuid4()))
@@ -62,7 +75,7 @@ class Project(BaseModel):
         return value.strip()
 
 
-class Marker(BaseModel):
+class Marker(ScientificModel):
     marker_id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
     md_ft: float
@@ -79,19 +92,20 @@ class Marker(BaseModel):
         return value.strip()
 
 
-class ControlPoint(BaseModel):
+class ControlPoint(ScientificModel):
     md_ft: float
     tvd_ft: float
+    x_ft: float | None = None
 
 
-class UncertaintyBand(BaseModel):
+class UncertaintyBand(ScientificModel):
     md_from_ft: float
     md_to_ft: float
-    band_tvd_ft: float
+    band_tvd_ft: float = Field(ge=0)
 
 
-class UncertaintyModel(BaseModel):
-    band_tvd_ft: Optional[float] = None
+class UncertaintyModel(ScientificModel):
+    band_tvd_ft: Optional[float] = Field(default=None, ge=0)
     bands: List[UncertaintyBand] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -101,7 +115,7 @@ class UncertaintyModel(BaseModel):
         return self
 
 
-class InterpretationVersion(BaseModel):
+class InterpretationVersion(ScientificModel):
     version_id: str = Field(default_factory=lambda: str(uuid4()))
     derived_from_version_id: Optional[str] = None
     created_at: datetime = Field(default_factory=utcnow)
@@ -121,17 +135,23 @@ class InterpretationVersion(BaseModel):
     @field_validator("top_control_points", "base_control_points")
     @classmethod
     def sorted_control_points(cls, points: List[ControlPoint]) -> List[ControlPoint]:
-        return sorted(points, key=lambda p: p.md_ft)
+        spatial = [p.x_ft is not None for p in points]
+        if any(spatial) and not all(spatial):
+            raise ValueError("Cannot mix MD and spatial horizon control points.")
+        coordinates = [p.x_ft if all(spatial) else p.md_ft for p in points]
+        if len(set(coordinates)) != len(coordinates):
+            raise ValueError("Horizon control coordinates must be unique.")
+        return sorted(points, key=lambda p: p.x_ft if all(spatial) else p.md_ft)
 
 
-class Recommendation(BaseModel):
+class Recommendation(ScientificModel):
     action: Literal["HOLD", "BUILD", "DROP"]
-    target_inc_deg: Optional[float] = None
-    target_azi_deg: Optional[float] = None
+    target_inc_deg: Optional[float] = Field(default=None, ge=0, le=180)
+    target_azi_deg: Optional[float] = Field(default=None, ge=0, lt=360)
     notes: Optional[str] = None
 
 
-class DecisionEntry(BaseModel):
+class DecisionEntry(ScientificModel):
     decision_id: str = Field(default_factory=lambda: str(uuid4()))
     step_index: int
     md_from_ft: float
@@ -150,22 +170,22 @@ class DecisionEntry(BaseModel):
         return value.strip()
 
 
-class PlanParameters(BaseModel):
-    kickoff_md_ft: float
-    landing_md_ft: float
-    lateral_length_ft: float
-    planned_azi_deg: float
-    build_rate_hint_deg_per_100ft: Optional[float] = None
-    step_ft: float = 100.0
+class PlanParameters(ScientificModel):
+    kickoff_md_ft: float = Field(ge=0)
+    landing_md_ft: float = Field(gt=0)
+    lateral_length_ft: float = Field(gt=0)
+    planned_azi_deg: float = Field(ge=0, lt=360)
+    build_rate_hint_deg_per_100ft: Optional[float] = Field(default=None, gt=0)
+    step_ft: float = Field(default=100.0, gt=0)
 
 
-class DLSExceedance(BaseModel):
+class DLSExceedance(ScientificModel):
     md_from_ft: float
     md_to_ft: float
     dls_deg_per_100ft: float
 
 
-class Plan(BaseModel):
+class Plan(ScientificModel):
     plan_id: str = Field(default_factory=lambda: str(uuid4()))
     name: str
     created_at: datetime = Field(default_factory=utcnow)

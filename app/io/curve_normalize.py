@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List
+from typing import Dict
 
 import pandas as pd
 
-
-GR_ALIASES = {"GR", "GAM", "GRC", "SGR"}
-RES_ALIASES = {"RES", "RT", "ILD", "RDEP", "AT90", "RESD"}
+GR_ALIASES = {"GR", "GAM", "GRC", "SGR", "GRMA", "CGR", "ECGR", "GRD"}
+RES_ALIASES = {"RES", "RT", "ILD", "RDEP", "AT90", "RESD", "RT_ARC", "RLA1", "RLA2", "RLA3", "RLA4", "RLA5"}
 
 
 @dataclass(frozen=True)
@@ -44,4 +43,3 @@ def normalize_curve_table(df: pd.DataFrame) -> tuple[pd.DataFrame, Dict[str, lis
             out[c_name] = pd.to_numeric(df[col], errors="coerce")
 
     return out, alias_map
-

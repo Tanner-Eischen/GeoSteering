@@ -3,8 +3,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pandas as pd
-
 from app.alg.kpi import compute_kpis
 from app.io.project_store import create_project, load_project
 from app.io.well_import import import_well_folder
@@ -13,7 +11,6 @@ from app.services.decisions import create_decision, load_decisions
 from app.services.interpretations import (
     create_baseline_interpretation,
     create_interpretation_version,
-    get_latest_interpretation,
 )
 from app.services.project_data import load_well_frames
 from app.sim.engine import initial_state, step_forward

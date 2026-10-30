@@ -3,6 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 from pathlib import Path
 
+import pandas as pd
+
 from app.io.project_store import create_project, load_project
 from app.io.well_import import import_well_folder
 from app.plot.correlation_panel import build_correlation_figure
@@ -43,3 +45,32 @@ def test_multiwell_display_minimum_three(tmp_path: Path) -> None:
     # Display shift must not mutate source marker MD values.
     assert markers_by_well == markers_before
 
+
+def test_per_curve_manual_ranges_apply_axis_and_clip() -> None:
+    logs = pd.DataFrame(
+        {
+            "md_ft": [1000.0, 1001.0, 1002.0, 1003.0],
+            "GR": [10.0, 50.0, 90.0, 130.0],
+            "RES": [1.0, 5.0, 20.0, 200.0],
+        }
+    )
+    fig = build_correlation_figure(
+        logs_by_well={"offset_01": logs},
+        curves=["GR", "RES"],
+        x_ranges={"GR": (40.0, 100.0), "RES": (2.0, 30.0)},
+        normalize_curves=False,
+        exclude_outliers=False,
+    )
+
+    assert tuple(fig.layout.xaxis.range) == (2.0, 100.0)
+
+    gr_x = fig.data[0].x
+    res_x = fig.data[1].x
+    assert pd.isna(gr_x[0])
+    assert not pd.isna(gr_x[1])
+    assert not pd.isna(gr_x[2])
+    assert pd.isna(gr_x[3])
+    assert pd.isna(res_x[0])
+    assert not pd.isna(res_x[1])
+    assert not pd.isna(res_x[2])
+    assert pd.isna(res_x[3])
