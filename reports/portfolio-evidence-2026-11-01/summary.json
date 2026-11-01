@@ -1,0 +1,56 @@
+{
+  "scenario_version": "structural_dip_01-v1",
+  "seed": 123,
+  "causal_comparison": {
+    "guided": {
+      "action_change_count": 57,
+      "avg_center_distance_ft": 1.074120655634311,
+      "clipped_command_count": 5,
+      "dls_violation_count": 0,
+      "evaluated_length_ft": 5000.0,
+      "in_zone_length_ft": 4858.713283922184,
+      "integration_step_max_ft": 1.0,
+      "max_dls_deg_per_100ft": 3.000000000000017,
+      "max_overshoot_ft": 2.6726085285911267,
+      "percent_in_zone": 97.17426567844367
+    },
+    "hold": {
+      "action_change_count": 0,
+      "avg_center_distance_ft": 27.52464829587919,
+      "clipped_command_count": 0,
+      "dls_violation_count": 0,
+      "evaluated_length_ft": 5000.0,
+      "in_zone_length_ft": 1903.5810398298531,
+      "integration_step_max_ft": 1.0,
+      "max_dls_deg_per_100ft": 0.0,
+      "max_overshoot_ft": 38.000000000000455,
+      "percent_in_zone": 38.07162079659706
+    }
+  },
+  "replay_evaluation": {
+    "interpretation_error": {
+      "baseline_interpretation_mean_absolute_error_ft": 14.999161207741123,
+      "final_interpretation_mean_absolute_error_ft": 8.081542794026898
+    },
+    "lateral_start_md_ft": 2000.0,
+    "limitation": "Recommendations did not change this fixed recorded trajectory",
+    "metric_basis": "withheld_truth",
+    "metrics": {
+      "avg_center_distance_ft": 27.52464829587919,
+      "dls_violation_count": 0,
+      "evaluated_length_ft": 5000.0,
+      "in_zone_length_ft": 1903.5810398298531,
+      "integration_step_max_ft": 1.0,
+      "max_dls_deg_per_100ft": 0.0,
+      "max_overshoot_ft": 38.000000000000455,
+      "percent_in_zone": 38.07162079659706
+    },
+    "mode": "replay",
+    "scenario_version": "structural_dip_01-v1",
+    "seed": 123,
+    "truth_input_sha256": "2858aa37ab5ade3fe879967dbadc19380ae18d788fa1798f8bc0efdd0ccb6a8f",
+    "truth_sha256": "2858aa37ab5ade3fe879967dbadc19380ae18d788fa1798f8bc0efdd0ccb6a8f"
+  },
+  "replay_steps": 100,
+  "qualifier": "Single synthetic scenario with known signed GR calibration; not field validation"
+}

@@ -18,7 +18,7 @@ The reference scenario uses a 24-ft target, three offset wells, a 5,000-ft later
 
 ## Reproduce the complete case study
 
-Run from this repository directory with Python 3.10 or newer. No paid APIs, browser automation, or external datasets are required.
+Run from this repository directory with Python 3.11 or newer. The verified release profile uses CPython 3.12 and hash-locked dependencies. No paid APIs, browser automation, or external datasets are required.
 
 ```powershell
 python -m venv .venv
@@ -88,3 +88,10 @@ Required report figures use Matplotlib and do not require Kaleido or a browser.
 ## License
 
 This project is available under the [MIT License](LICENSE).
+
+## Verified release package
+
+The 0.2.0 release uses platform-specific hash locks, exact packaged-source
+provenance, and a read-only verifier for saved and relocated projects. See
+[release installation and checks](docs/RELEASE.md). The release evidence records
+which clean-install, numerical, persistence, export and PDF checks were executed.

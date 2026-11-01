@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -25,16 +24,12 @@ from app.services.run_paths import run_root
 from app.services.runs import advance_run, initialize_run
 from app.sim.sim_models import SimulationConfig
 from tools.generate_sample_data import generate_sample_data
+from tools.release_provenance import describe_code
 
 
 def _revision():
-    repository = Path(__file__).resolve().parents[1]
-
-    def git(*args):
-        result = subprocess.run(["git", *args], cwd=repository, capture_output=True, text=True, check=False)
-        return result.stdout.strip() if result.returncode == 0 else "unavailable"
-
-    return git("rev-parse", "HEAD"), bool(git("status", "--porcelain"))
+    provenance = describe_code()
+    return provenance["code_revision"], provenance["dirty_working_tree"]
 
 
 def _update(points, x, tvd):
@@ -88,6 +83,7 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
         for path in sorted(sample_root.rglob("*"))
         if path.is_file() and path.name != "truth.json"
     }
+    acquired_manifest = read_json(scope / "manifest.json")
     atomic_write_json(
         scope / "manifest.json",
         {
@@ -96,9 +92,11 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
             "run_id": state.run_id,
             "plan_id": plan.plan_id,
             "mode": "replay",
-            "input_hashes": hashes,
+            "input_hashes": acquired_manifest["input_hashes"],
+            "sample_input_hashes": hashes,
             "code_revision": revision,
             "dirty_working_tree": dirty,
+            "code_provenance": describe_code(),
             "coordinate_reference": "LOCAL_EAST_NORTH_FT; LOCAL_TVD positive down",
             "sensor_calibration": public["sensor_calibration"],
             "uncertainty_note": public["uncertainty_note"],
@@ -213,9 +211,9 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
         {
             "run_id": state.run_id,
             "plan_id": plan.plan_id,
-            "report": str(report.relative_to(project_root)),
+            "report": report.relative_to(project_root).as_posix(),
             "summary": "exports/summary.json",
-            "figure_directory": str((scope / "cache" / "report_snapshots").relative_to(project_root)),
+            "figure_directory": (scope / "cache" / "report_snapshots").relative_to(project_root).as_posix(),
         },
     )
     return report

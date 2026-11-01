@@ -59,12 +59,16 @@ def compute_trajectory(
         inc1, inc2 = inc[i - 1], inc[i]
         azi1, azi2 = azi[i - 1], azi[i]
 
-        cos_dogleg = math.cos(inc2 - inc1) - (math.sin(inc1) * math.sin(inc2)) * (1.0 - math.cos(azi2 - azi1))
-        cos_dogleg = float(np.clip(cos_dogleg, -1.0, 1.0))
-        dogleg = math.acos(cos_dogleg)
+        # The half-angle vector formula preserves tiny turns that acos(dot)
+        # rounds to zero, while remaining stable near opposite directions.
+        first = np.array([math.sin(inc1) * math.cos(azi1), math.sin(inc1) * math.sin(azi1), math.cos(inc1)])
+        second = np.array([math.sin(inc2) * math.cos(azi2), math.sin(inc2) * math.sin(azi2), math.cos(inc2)])
+        dogleg = 2.0 * math.atan2(float(np.linalg.norm(second - first)), float(np.linalg.norm(second + first)))
+        if math.pi - dogleg < 1e-10:
+            raise ValueError("Opposite survey directions have no unique minimum-curvature arc.")
 
         if abs(dogleg) < 1e-8:
-            rf = 1.0
+            rf = 1.0 + dogleg * dogleg / 12.0
         else:
             rf = (2.0 / dogleg) * math.tan(dogleg / 2.0)
 
@@ -88,4 +92,3 @@ def compute_trajectory(
     out["dogleg_deg"] = dogleg_deg
     out["dls_deg_per_100ft"] = dls
     return out
-

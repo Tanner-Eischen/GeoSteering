@@ -1,18 +1,18 @@
 [build-system]
-requires = ["setuptools>=77", "wheel"]
+requires = ["setuptools==84.2.1", "wheel==0.48.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "geosteering-workbench"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local Streamlit application for geosteering practice with synthetic wells."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
   # Keep major versions bounded to reduce resolver conflicts.
-  "streamlit>=1.40,<2",
+  "streamlit>=1.66.1,<2",
   "plotly>=5.24,<7",
   "pandas>=2.2,<3",
   "numpy>=1.26,<3",
@@ -24,16 +24,26 @@ dependencies = [
   # Streamlit pulls protobuf constraints transitively, but pinning here avoids
   # resolver conflicts in mixed environments.
   "protobuf>=3.20,<7",
+  # Security floors for image/PDF handling and Streamlit HTTP transitives.
+  "pillow>=13,<14",
+  "pypdf>=6.21.4,<7",
+  "certifi>=2026.10.18",
+  "idna>=3.15,<4",
+  "requests>=2.33.0,<3",
+  "urllib3>=2.8.0,<3",
 ]
 
 [project.optional-dependencies]
 test = [
-  "pytest>=8.3",
-  "pypdf>=5.0",
+  "pytest>=9.0.3,<10",
+  "Pygments>=2.20.0,<3",
 ]
 dev = [
   "ruff>=0.6.9",
   "build>=1.2",
+  "pip==26.2.2",
+  "setuptools==84.2.1",
+  "wheel==0.48.0",
 ]
 
 [tool.setuptools]
@@ -49,7 +59,7 @@ python_files = ["test_*.py"]
 addopts = "-q"
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py311"
 line-length = 120
 
 [tool.ruff.lint]

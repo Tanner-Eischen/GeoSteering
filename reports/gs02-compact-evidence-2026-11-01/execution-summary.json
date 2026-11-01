@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "checked_at_utc": "2026-11-01T05:40:39.170670+00:00",
+  "status": "local_backend_validation_passed",
+  "source_provenance": {
+    "basis": "verified_packaged_source_manifest",
+    "code_revision": "14ffc90dfd547cfc1217d1ce3a059b4928639dc2",
+    "dirty_working_tree": true,
+    "source_fingerprint": "fb22d15aaf2b509230b2edf927c29cd43466c0f56c361e5659dd94cf59cbc2a0",
+    "source_file_count": 77,
+    "runtime_git_revision": null,
+    "runtime_git_dirty": null,
+    "source_bytes_verified": true
+  },
+  "fresh_installed_seed123_runs": 2,
+  "deterministic_numeric_summary_sha256": "be1028dc40bde6feebdfa8696e58679c7a31ffcb81dc6a86a6be70a28a90333a",
+  "headline_causal_metrics": {
+    "guided": {
+      "action_change_count": 57,
+      "avg_center_distance_ft": 1.074120655634311,
+      "clipped_command_count": 5,
+      "dls_violation_count": 0,
+      "evaluated_length_ft": 5000.0,
+      "in_zone_length_ft": 4858.713283922184,
+      "integration_step_max_ft": 1.0,
+      "max_dls_deg_per_100ft": 3.000000000000017,
+      "max_overshoot_ft": 2.6726085285911267,
+      "percent_in_zone": 97.17426567844367
+    },
+    "hold": {
+      "action_change_count": 0,
+      "avg_center_distance_ft": 27.52464829587919,
+      "clipped_command_count": 0,
+      "dls_violation_count": 0,
+      "evaluated_length_ft": 5000.0,
+      "in_zone_length_ft": 1903.5810398298531,
+      "integration_step_max_ft": 1.0,
+      "max_dls_deg_per_100ft": 0.0,
+      "max_overshoot_ft": 38.000000000000455,
+      "percent_in_zone": 38.07162079659706
+    }
+  },
+  "fresh_report": {
+    "path": "report.pdf",
+    "sha256": "9dc340594f8dff06ced868f90817536d49efac6eac4b67e5fab85b0de2cf4819",
+    "pages": 13,
+    "figures": 7
+  },
+  "tests": [
+    {
+      "artifact": "workflow-tests.xml",
+      "tests": 28,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    },
+    {
+      "artifact": "resilience-tests.xml",
+      "tests": 11,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0
+    }
+  ],
+  "total_tests_passed": 39,
+  "unchanged_original_packet_files_hash_checked": 17,
+  "unchanged_packaged_source_files_hash_checked": 77,
+  "harness_sha256": {
+    "scripts/verify_guided_workflow.py": "2a0c1dd566f216b8a263472b05488253ff00d27c89fa22a94211936431e8b319",
+    "tests/test_guided_workflow_resilience.py": "b37c7bc66b7635eb7c13d6b9322c30ede16203d437266446669ffa565d10f6f5",
+    "docs/implementation/GS02_LOCAL_WORKFLOW.md": "75fcebfc3f80d2579d3bb062c9d19a7f593767e51d4ea3a036653cbe3539b1ac"
+  },
+  "proofs": [
+    "installed-source-proof.json",
+    "fresh-verification.json",
+    "repeat-verification.json",
+    "comparison-check.json",
+    "reopened-verification.json",
+    "relocated-verification.json",
+    "independent-workflow-verification.json",
+    "export-reopen-verification.json"
+  ],
+  "not_executed": [
+    "Fresh clean installation",
+    "Complete pytest suite",
+    "Linux execution",
+    "Browser/operator walkthrough",
+    "Browser duplicate-submit behavior",
+    "Visual PDF layout review",
+    "Signed-out access",
+    "Publication"
+  ],
+  "browser_used": false,
+  "published": false,
+  "paid_calls": false,
+  "snapshot_note": "Compact copy of the executed local validation; full run/test workspaces are intentionally not versioned. JUnit hostnames removed; counts and case outcomes unchanged."
+}

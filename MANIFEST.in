@@ -1,3 +1,5 @@
 include README.md app.py
+include app/_release_source.json
+include requirements-release-*.lock requirements-release-pins.txt
 recursive-include docs *.md *.png
 recursive-include case_studies *.json *.md

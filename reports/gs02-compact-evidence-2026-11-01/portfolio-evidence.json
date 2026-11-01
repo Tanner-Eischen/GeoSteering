@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "project_id": "geosteering",
+  "release_id": "structural-dip-01-seed123-compact-validation-2026-11-01",
+  "status": "local_backend_reproduced_not_published",
+  "implemented_contribution": "LAS/survey QC, offset interpretation, constrained planning, immutable replay history, bounded causal steering and independently scored reports",
+  "source_revision": "14ffc90dfd547cfc1217d1ce3a059b4928639dc2",
+  "tested_revision": null,
+  "tested_source_fingerprint": "fb22d15aaf2b509230b2edf927c29cd43466c0f56c361e5659dd94cf59cbc2a0",
+  "dirty_source_snapshot": true,
+  "source_revision_meaning": "Base Git ancestry; exact tested bytes identified by the fingerprint",
+  "source_access": {
+    "base_source_url": "https://github.com/Tanner-Eischen/GeoSteering/tree/14ffc90dfd547cfc1217d1ce3a059b4928639dc2",
+    "base_repository_access": "public_per_plan_not_network_checked",
+    "tested_snapshot_public": false,
+    "packet_published": false,
+    "public_artifact_urls": [],
+    "owner_approval": "pending_review"
+  },
+  "scenario": {
+    "id": "structural_dip_01-v1",
+    "seed": 123,
+    "coordinate_reference": "LOCAL_EAST_NORTH_FT; LOCAL_TVD positive down",
+    "sensor_model": "signed_calibrated_reference",
+    "sensor_calibration": {
+      "gr_center_api": 80.0,
+      "gr_gradient_api_per_ft": 2.0,
+      "gr_noise_std_api": 0.6,
+      "gr_saturation_api": [
+        20.0,
+        160.0
+      ]
+    },
+    "evaluated_interval_md_ft": [
+      2000,
+      7000
+    ],
+    "denominator_ft": 5000,
+    "lateral_dls_limit_deg_per_100ft": 3,
+    "landing_dls_limit_deg_per_100ft": 6
+  },
+  "headline_results": [
+    {
+      "metric": "lateral_in_zone",
+      "value": 97.17426567844367,
+      "unit": "percent",
+      "policy": "guided",
+      "mode": "causal_simulation",
+      "denominator": 5000,
+      "denominator_unit": "ft",
+      "scope": "structural_dip_01-v1 synthetic scenario, seed 123, known signed GR calibration",
+      "evidence": "execution-summary.json#/headline_causal_metrics/guided",
+      "qualification": "Synthetic reference comparison; not operational drilling performance"
+    },
+    {
+      "metric": "lateral_in_zone",
+      "value": 38.07162079659706,
+      "unit": "percent",
+      "policy": "hold",
+      "mode": "causal_simulation",
+      "denominator": 5000,
+      "denominator_unit": "ft",
+      "scope": "structural_dip_01-v1 synthetic scenario, seed 123, known signed GR calibration",
+      "evidence": "execution-summary.json#/headline_causal_metrics/hold",
+      "qualification": "Synthetic reference comparison; not operational drilling performance"
+    }
+  ],
+  "checks": {
+    "fresh_simulation": "two installed seed123 runs; identical numerical summary",
+    "saved_artifact_verification": "passed",
+    "workflow_tests": "28 passed",
+    "abrupt_process_recovery_tests": "11 passed",
+    "existing_installed_environment_reattested": "passed; not a fresh install",
+    "full_suite": "not_rerun",
+    "browser": "unverified",
+    "publication": "not_performed"
+  },
+  "limitations": [
+    "One idealized two-dimensional synthetic scenario and seed; no geological generalization claim",
+    "Known signed GR calibration; 0.6 API Gaussian noise and clipping at 20-160 API",
+    "Assumed uncertainty envelope, not a calibrated statistical interval",
+    "Replay recommendations do not change the recorded trajectory",
+    "Simplified causal kinematics; no operational safety or field-data performance claim",
+    "Browser/operator walkthrough and Linux execution unverified",
+    "Tested dirty source snapshot differs from the public base commit"
+  ],
+  "assets": {
+    "comparison-check.json": "cf4f021228bbc7e61e336c55e50733d50b368f1f1cb88c70524ae13db4646855",
+    "execution-summary.json": "f25ba769f2effa6b5b736d79382117182a14a0eb622ec6efe84b1ced8a4ee9e8",
+    "export-reopen-verification.json": "e18c2e01606d1531ffa9333329ead553ecf5b317f5c1f74709599003f62a48e9",
+    "figures/correlation_snapshot.png": "63e8e5f462f48a1ff6709bb955f621e9f4b42f292e89c8134de0eb68c5acb06d",
+    "figures/decision_timeline.png": "9148fcc167d98dc13c23ae734b8d3b692c4d56a2c2b830505aaa2531ae8b7afb",
+    "figures/dls_profile.png": "6068f738d09fa010b9484463146e37ce1c28f4de0834e8e89599442e91090853",
+    "figures/interpretation_overlay.png": "96a6c37b7a64c2184a2d36610e6c0a64318674b7387592a06d0ce78b8ba51c8c",
+    "figures/kpi_trend.png": "7b2c03bab38f2ff8d43ba0214119a65168ed65ed696fcf5b029ab48101a5faf8",
+    "figures/plan_profile.png": "f6728349965cb4289e4bb906e2c57c4a4e7c44555d350ca885e9cdf325d6e0fb",
+    "figures/strategy_comparison.png": "cd81493ee594b0d173812da94f692c15e99c188bf18c799321c05db1557ba168",
+    "fresh-verification.json": "0ba5b4bfc04e8a011fa4ca21520fb0e4772029a2152faa369c8cef19867ddbbf",
+    "independent-workflow-verification.json": "92f5a3160317a33081cfcdd19e129a9dd16838e6f84fdecbd76e9b6168d1bc6c",
+    "installed-source-proof.json": "dc878a38b663c39680a859c1f84edc7d93cd15addd1015c0ad184662e8844cc7",
+    "relocated-verification.json": "0ba5b4bfc04e8a011fa4ca21520fb0e4772029a2152faa369c8cef19867ddbbf",
+    "reopened-verification.json": "0ba5b4bfc04e8a011fa4ca21520fb0e4772029a2152faa369c8cef19867ddbbf",
+    "repeat-verification.json": "4be84ed410c43fbb7173542281c2deff959eeff1f9c171d98f5a31bfdf9ad52b",
+    "replay-decisions.csv": "14bca5b033e67a1b803bab7cfbdf3ffaf22bd4357f5046bf85685f87e7e98122",
+    "report.pdf": "9dc340594f8dff06ced868f90817536d49efac6eac4b67e5fab85b0de2cf4819",
+    "resilience-tests.xml": "7af548ddbbe7019c5198b103f6449786964c82a27efdb90adafc37f9d38c091d",
+    "run-manifest.json": "e56357e15015ba8d5a74d881164a8ac3b942b10ad73434f9f7d2ac0607e3e909",
+    "summary.json": "be1028dc40bde6feebdfa8696e58679c7a31ffcb81dc6a86a6be70a28a90333a",
+    "workflow-tests.xml": "2f3dd6b46c984c1192f05a22ea5300847578d98032b0b6e5c2ba95eabf4edd4f"
+  },
+  "licenses": {
+    "code_and_generated_report_assets": "MIT; see LICENSE",
+    "raw_field_data": "excluded"
+  },
+  "last_verified_at_utc": "2026-11-01T05:40:39.170670+00:00"
+}

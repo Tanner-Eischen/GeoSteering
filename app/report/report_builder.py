@@ -41,6 +41,7 @@ def build_report(
     styles = getSampleStyleSheet()
     styles["Normal"].fontSize = 8
     styles["Normal"].leading = 11
+    styles["Heading2"].keepWithNext = True
     story = []
 
     def text(value, style="Normal"):
