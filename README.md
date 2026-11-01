@@ -91,6 +91,12 @@ This project is available under the [MIT License](LICENSE).
 
 ## Verified release package
 
+The current 0.2.1 source adds opt-in durable advance requests with explicit
+run/step guards; the case-study CLI and steering form pass those guards. See
+[request contract, compatibility and local validation](docs/implementation/GS02_IDEMPOTENCY_2026-11-01.md).
+Browser duplicate-submit behavior remains unverified. Original 0.2.0 evidence
+retains its historical source identity.
+
 The 0.2.0 release uses platform-specific hash locks, exact packaged-source
 provenance, and a read-only verifier for saved and relocated projects. See
 [release installation and checks](docs/RELEASE.md). The release evidence records

@@ -135,6 +135,9 @@ def fork_run(project_root: str | Path, run_id: str | None = None) -> SimulationS
     atomic_write_json(destination / "simulations" / "simulation_config.json", payload)
     new_state = state.model_copy(update={"run_id": new_id}, deep=True)
     atomic_write_json(destination / "simulations" / "simulation_state.json", new_state.model_dump(mode="json"))
+    if (destination / "step_requests.json").exists():
+        # Request identities belong to the parent run, not the fork's acquired prefix.
+        atomic_write_json(destination / "step_requests.json", [])
     from app.io.project_store import read_json
     manifest = read_json(destination / "manifest.json", default={})
     manifest.update({"run_id": new_id, "parent_run_id": config.run_id, "forked_at_step": state.step_index})
@@ -153,8 +156,16 @@ def advance_run(
     base_control_points: Sequence[ControlPoint] | None = None,
     target_inc_deg: float | None = None,
     uncertainty_band_tvd_ft: float | None = None,
+    *,
+    run_id: str | None = None,
+    expected_step_index: int | None = None,
+    request_id: str | None = None,
 ) -> SimulationState:
-    """Record a recommendation using current evidence, then reveal the next interval."""
+    """Record evidence and reveal one interval.
+
+    Pass all three request guards for durable retry/idempotency and explicit run
+    selection. Legacy unguarded calls retain their single-writer behavior.
+    """
     config = load_simulation_config(project_root)
     state = load_simulation_state(project_root)
     if state.complete:

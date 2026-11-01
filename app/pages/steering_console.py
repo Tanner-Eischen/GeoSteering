@@ -116,7 +116,7 @@ def render(project_root: str | None) -> None:
         st.caption(f"Uncertainty: ±{latest.uncertainty.band_tvd_ft:g} ft scenario-assumed range; not a calibrated confidence interval.")
     if not state.complete:
         current_x = float(trajectory[xcol].iloc[-1])
-        with st.form("recommend_and_reveal"):
+        with st.form(f"recommend_and_reveal_{state.run_id}_{state.step_index}"):
             st.markdown("#### Evidence and next-interval recommendation")
             observations = st.text_area("Observed evidence (required)")
             action = st.selectbox("Recommendation", ["HOLD", "BUILD", "DROP"])
@@ -140,6 +140,9 @@ def render(project_root: str | None) -> None:
                             top_control_points=_replace_spatial_point(latest.top_control_points, cp_x, cp_top) if update else None,
                             base_control_points=_replace_spatial_point(latest.base_control_points, cp_x, cp_base) if update else None,
                             target_inc_deg=float(target_inc) if use_target and config.mode == "causal" else None,
+                            run_id=state.run_id,
+                            expected_step_index=state.step_index,
+                            request_id=f"steering-{state.run_id}-{state.step_index}",
                         )
                     except ValueError as exc:
                         st.error(str(exc))

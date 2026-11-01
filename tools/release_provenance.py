@@ -78,7 +78,7 @@ def write_manifest(root=ROOT):
     revision, dirty = git_identity(root)
     record = {
         "schema_version": 1,
-        "release_version": "0.2.0",
+        "release_version": "0.2.1",
         "base_git_revision": revision or "unavailable",
         "source_working_tree_dirty": dirty,
         "source_fingerprint": fingerprint(hashes),

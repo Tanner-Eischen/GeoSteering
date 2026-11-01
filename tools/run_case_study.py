@@ -159,6 +159,9 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
             top_control_points=revised_top,
             base_control_points=revised_base,
             uncertainty_band_tvd_ft=assumed_band,
+            run_id=state.run_id,
+            expected_step_index=state.step_index,
+            request_id=f"case-study-{state.run_id}-{state.step_index}",
         )
         iterations += 1
     export_decision_log_csv(project_root, project_root / "exports" / "decision_log.csv")

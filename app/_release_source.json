@@ -1,9 +1,9 @@
 {
-  "base_git_revision": "14ffc90dfd547cfc1217d1ce3a059b4928639dc2",
+  "base_git_revision": "830a84ea00cf29fb344312c3322679af05eb9e27",
   "meaning": "Exact Python source bytes, including uncommitted release changes; base Git revision is not a claim that the snapshot equals that commit",
-  "release_version": "0.2.0",
+  "release_version": "0.2.1",
   "schema_version": 1,
-  "source_fingerprint": "fb22d15aaf2b509230b2edf927c29cd43466c0f56c361e5659dd94cf59cbc2a0",
+  "source_fingerprint": "9f96eaa8a2848fb86685adc76b69c1db7e91ec8cededb983ad7de4e6b4923621",
   "source_sha256": {
     "app/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "app/alg/__init__.py": "7509e49e84b178d5c12f16cec501be4850d43a330ff11f809b617bc432eb2267",
@@ -29,7 +29,7 @@
     "app/pages/data_qc.py": "c696910dd7718ebc4cbb89fe84380f8ff71434adac8e6e4ec22ee88caeebe52b",
     "app/pages/planning.py": "ac492803ec5f6f3673188fe2983360924797ea4a2c78119ce3eef33068b3b10b",
     "app/pages/report_export.py": "17added76f44903ea6be68798b540f1fb052be72db2a776e0cf950b2ecf82a02",
-    "app/pages/steering_console.py": "ef5e54841eca30c59b7adf2082631b25eb8c81b3d6b008f0fdd4c194b75a8031",
+    "app/pages/steering_console.py": "46469b3f37aeb47c68bec24f208a44a18ebdab93b284b16bbe3eacacef9deb4a",
     "app/pages/well_viewer.py": "2f3390abe0f7784c001844dd68c8cc890337f44f8bf541e0fa13237722395cf4",
     "app/plan/__init__.py": "2f4bfc4efa342cfd16d8cae1d7e94aaa25ca1030f9598fc7c14a749f5cf86f6c",
     "app/plan/plan_export.py": "92d2b5a6b78d6b89d1b58ed194f41ac4dae51e0733ab0cae6012d605df7b5d0d",
@@ -57,9 +57,9 @@
     "app/services/project_data.py": "90bea34c84c6180f1ac0b354306d1244cf2413556433c68a0f23f74b4b38a4da",
     "app/services/run_inputs.py": "fe9471a6a0c5ad79055467b302ac4da9c58219f6c6ae49dd50bc339cb738c89a",
     "app/services/run_metrics.py": "ee23c69cbd46202818bd4cd184d450e6ee2c145fbb95ccd1f70c86f581519a51",
-    "app/services/run_paths.py": "f87bc6c4945251f771bcc8f488fe6fb0e002844ee6fc32d84cfc4cf12f0e116d",
-    "app/services/run_transactions.py": "6c21a958311f0c0145f51fa5f1df5f2b77f462c05de90359a6df7eb2f755b0ac",
-    "app/services/runs.py": "9e13efcd4703274543ccca8b95ba58145e0886065a17aaee56470a9442b43460",
+    "app/services/run_paths.py": "a1aa6611c8dc1ecbd05c8645e24a0aa88f1330c6436302b69a9e03cc287c4c0e",
+    "app/services/run_transactions.py": "a43b7b21b9edc5cd39465287f030d22162cad34c7713a2aa376926df08cef177",
+    "app/services/runs.py": "81495e67d5980a10cb4c5746ff798b2f2d5450010d52725659400f10f1ee4e54",
     "app/sim/__init__.py": "f99b55d81b522a953a5ed98ce61d9b23ee11181b923317f77bc114dbd7a74285",
     "app/sim/causal.py": "924d931e8edfa4ac883c0c35eab5e051a4ba5dccf55f2f8a9b807951929c5b68",
     "app/sim/engine.py": "c7cc425e7427949646e1cfee2e6e6916b4e8bccc6a914cee6fb3ce94e0dcb396",
@@ -78,10 +78,10 @@
     "tools/generate_sample_data.py": "ad523686571991ae34c6597edfba8b0d848699c021dc687539c8684c20f08234",
     "tools/import_well.py": "93f3636da11656b44b1183db53dc98a74782108866588a57b9923b1e8a3a6b64",
     "tools/release_install_probe.py": "6242b6f5d560aa070cb09e5e51c1086e945708b34408553eb740c64f85c0df77",
-    "tools/release_package.py": "9258cd5ac0663afd42a7ebd538ba207e6250704751f1790db967d58836e4c6e2",
-    "tools/release_provenance.py": "5a5bb6469802d3337a5293926e6c30692a99aa5deeb1ec7daa5ec33ee18b4335",
+    "tools/release_package.py": "60ceef3d9452c4e17b2e8bd546b8c824f78bdf967624bc4f860ff753ad86005c",
+    "tools/release_provenance.py": "59672e3cdb987ca0bf5c485090dc90d5eb0b34808329fc72dbf40e340568ae1a",
     "tools/release_verify.py": "840cf05ec9e412939d34e5593b73250bf73d86d00b648b2c34b710a73d534795",
-    "tools/run_case_study.py": "fecebace03700b0e32819a9bc3283875c889a462167f551b0709b01b3abc5f31"
+    "tools/run_case_study.py": "d4f4c7de2f49ad241e3204f131291ef9b7b954d961a611ce2b8e2aae8e9aba37"
   },
   "source_working_tree_dirty": true
 }

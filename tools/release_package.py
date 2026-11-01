@@ -85,7 +85,7 @@ def package(case, proofs, dist, out, qa):
     summary = {
         "schema_version": 1,
         "status": "passed",
-        "release_version": "0.2.0",
+        "release_version": json.loads((ROOT / "app/_release_source.json").read_text())["release_version"],
         "source_provenance": describe_code(),
         "current_case": report,
         "clean_install": {
