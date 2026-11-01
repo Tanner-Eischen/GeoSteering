@@ -8,22 +8,15 @@ import streamlit as st
 
 from app.alg.interpretation_model import evaluate_piecewise_linear
 from app.io.project_store import read_json
-from app.model.schemas import ControlPoint
 from app.plot.steering import build_active_window_figure, build_kpi_trend_figure
 from app.services.baseline import estimate_offset_baseline
-from app.services.interpretations import get_latest_interpretation
-from app.services.project_data import load_project_and_wells, load_well_frames
-from app.services.run_metrics import load_run_metrics
-from app.services.run_paths import run_root
-from app.services.runs import advance_run, fork_run, initialize_run
+from app.services.operator_workflow import load_operator_view, submit_steering
+from app.services.project_data import load_project_and_wells
+from app.services.run_paths import active_run_id
+from app.services.runs import fork_run, initialize_run
 from app.sim.sim_models import SimulationConfig
-from app.sim.sim_store import load_simulation_config, load_simulation_state
+from app.sim.sim_store import load_simulation_config
 from app.ui.theme import render_page_header
-
-
-def _replace_spatial_point(points: list[ControlPoint], x_ft: float, tvd_ft: float) -> list[ControlPoint]:
-    retained = [point for point in points if abs(float(point.x_ft) - x_ft) > 1e-8]
-    return sorted([*retained, ControlPoint(md_ft=x_ft, x_ft=x_ft, tvd_ft=tvd_ft)], key=lambda p: p.x_ft)
 
 
 def render(project_root: str | None) -> None:
@@ -36,6 +29,10 @@ def render(project_root: str | None) -> None:
         st.info("Open a project or load the case study from Dashboard.")
         return
     root = Path(project_root)
+    run_selection_key = f"steering_run_{root.resolve()}"
+    pending_run = st.session_state.pop(f"{run_selection_key}_pending", None)
+    if pending_run is not None:
+        st.session_state[run_selection_key] = pending_run
     project, wells = load_project_and_wells(root)
     if not wells:
         st.info("Import wells before starting a replay.")
@@ -76,22 +73,30 @@ def render(project_root: str | None) -> None:
                     previous_config = load_simulation_config(root)
                 except FileNotFoundError:
                     previous_config = None
-                initialize_run(root, config, top, base, uncertainty, hidden_truth_path=previous_config.hidden_truth_path if previous_config else None)
+                created = initialize_run(root, config, top, base, uncertainty, hidden_truth_path=previous_config.hidden_truth_path if previous_config else None)
             except (ValueError, FileNotFoundError) as exc:
                 st.error(str(exc))
             else:
+                st.session_state[f"{run_selection_key}_pending"] = created.run_id
                 st.rerun()
-    try:
-        config = load_simulation_config(root)
-        state = load_simulation_state(root)
-    except FileNotFoundError:
+    run_ids = sorted(path.name for path in (root / "runs").glob("*") if path.is_dir())
+    if not run_ids:
         st.info("Initialize a replay with offset formation picks. Old MD-only interpretations require a new spatial run.")
         return
-    latest = get_latest_interpretation(root)
+    active = active_run_id(root)
+    selected_run = st.selectbox("Saved steering run", run_ids,
+                                index=run_ids.index(active) if active in run_ids else 0,
+                                key=run_selection_key)
+    try:
+        view = load_operator_view(root, selected_run)
+    except (FileNotFoundError, ValueError) as exc:
+        st.error(str(exc))
+        return
+    config, state, latest = view["config"], view["state"], view["interpretation"]
     if latest is None or not all(point.x_ft is not None for point in latest.top_control_points):
         st.warning("This legacy run has an MD-based interpretation. Initialize a new spatial replay from offset picks.")
         return
-    frames = load_well_frames(root, config.active_well_id)
+    frames = view["frames"]
     trajectory, logs = frames["trajectory"], frames["logs"]
     a, b, c = st.columns(3)
     a.metric("Step", state.step_index)
@@ -99,7 +104,8 @@ def render(project_root: str | None) -> None:
     c.metric("Status", "Complete" if state.complete else "Running")
     st.caption(f"{config.mode.title()} run {config.run_id} · Seed {config.seed} · {config.scenario_version}")
     if not state.complete and st.button("Fork current run for a command comparison"):
-        fork_run(root)
+        forked = fork_run(root, run_id=selected_run)
+        st.session_state[f"{run_selection_key}_pending"] = forked.run_id
         st.rerun()
     st.plotly_chart(build_active_window_figure(logs, state.revealed_md_ft, config.window_size_ft, config.curves_used), use_container_width=True)
     st.caption("Offset logs remain available over their full acquired depth. Use Correlation Panel for marker-aligned geological ties; matching MD alone is not a stratigraphic correlation.")
@@ -135,20 +141,19 @@ def render(project_root: str | None) -> None:
                     st.error("Base TVD must be below top TVD.")
                 else:
                     try:
-                        advance_run(
-                            root, action, observations, rationale=rationale or None,
-                            top_control_points=_replace_spatial_point(latest.top_control_points, cp_x, cp_top) if update else None,
-                            base_control_points=_replace_spatial_point(latest.base_control_points, cp_x, cp_base) if update else None,
+                        submit_steering(
+                            root, action=action, observations=observations, rationale=rationale,
+                            interpretation_version_id=latest.version_id,
+                            update_bounds=(cp_x, cp_top, cp_base) if update else None,
                             target_inc_deg=float(target_inc) if use_target and config.mode == "causal" else None,
                             run_id=state.run_id,
                             expected_step_index=state.step_index,
-                            request_id=f"steering-{state.run_id}-{state.step_index}",
                         )
                     except ValueError as exc:
                         st.error(str(exc))
                     else:
                         st.rerun()
-    metrics = load_run_metrics(root)
+    metrics = view["metrics"]
     if metrics:
         st.markdown("#### Persisted estimated-zone history")
         last = metrics[-1]
@@ -163,13 +168,13 @@ def render(project_root: str | None) -> None:
             st.dataframe(pd.DataFrame(metrics), hide_index=True)
     if state.complete:
         st.markdown("#### Completed retrospective evaluation")
-        evaluation = read_json(run_root(root) / "evaluation" / "replay.json", default={})
+        evaluation = read_json(view["scope"] / "evaluation" / "replay.json", default={})
         if st.button("Evaluate completed replay against withheld truth"):
             from app.io.project_store import atomic_write_json
             from app.services.evaluation import evaluate_completed_run
             try:
-                evaluation = evaluate_completed_run(root)
-                atomic_write_json(run_root(root) / "evaluation" / "replay.json", evaluation)
+                evaluation = evaluate_completed_run(root, run_id=selected_run)
+                atomic_write_json(view["scope"] / "evaluation" / "replay.json", evaluation)
             except ValueError as exc:
                 st.error(str(exc))
         if evaluation:
@@ -178,12 +183,13 @@ def render(project_root: str | None) -> None:
             from app.io.project_store import atomic_write_json
             from app.services.evaluation import load_completed_scenario
             from app.sim.causal import compare_strategies
-            comparison = compare_strategies(scenario=load_completed_scenario(root), seed=config.seed)
-            atomic_write_json(run_root(root) / "evaluation" / "comparison.json", comparison)
-        comparison = read_json(run_root(root) / "evaluation" / "comparison.json", default={})
+            comparison = compare_strategies(scenario=load_completed_scenario(root, run_id=selected_run), seed=config.seed)
+            atomic_write_json(view["scope"] / "evaluation" / "comparison.json", comparison)
+        comparison = read_json(view["scope"] / "evaluation" / "comparison.json", default={})
         if comparison:
             st.caption("These are separate causal runs from the same landing state. Their bounded commands change their simulated paths.")
             st.dataframe(pd.DataFrame({name: value["metrics"] for name, value in comparison["runs"].items()}).T)
     if st.button("Open Report Export"):
+        st.session_state["report_target"] = {"project_root": str(root.resolve()), "run_id": selected_run}
         st.session_state["nav_target"] = "Report Export"
         st.rerun()

@@ -31,6 +31,11 @@ _ACTIVE: set[str] = set()
 _LOCKS: dict[str, threading.RLock] = {}
 
 
+def run_access_lock(scope):
+    """Serialize same-process views/exports with an advance of this exact run."""
+    return _LOCKS.setdefault(str(Path(scope).resolve()), threading.RLock())
+
+
 def _restore(scope: Path, files: dict) -> None:
     for relative, encoded in files.items():
         if relative not in _DOCUMENTS:
@@ -79,7 +84,7 @@ def atomic_run_step(function):
             or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}", request_id) is None
         ):
             raise ValueError("Guarded advance requires run_id, nonnegative expected_step_index and request_id")
-        with selected_run(project_root, run_id) as scope, _LOCKS.setdefault(str(scope.resolve()), threading.RLock()):
+        with selected_run(project_root, run_id) as scope, run_access_lock(scope):
             recover_run(scope)
             receipt_path = scope / "step_requests.json"
             receipts = read_json(receipt_path, default=[]) if guarded else []

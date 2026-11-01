@@ -147,7 +147,7 @@ def generate_report_snapshots(
     if decisions:
         fig, ax = plt.subplots(figsize=(10, 2.5))
         codes = {"DROP": -1, "HOLD": 0, "BUILD": 1}
-        ax.step([d.step_index for d in decisions], [codes[d.recommendation.action] for d in decisions], where="mid")
+        ax.step([d.step_index for d in decisions], [codes[d.recommendation.action] for d in decisions], where="mid", marker="o")
         ax.set(
             xlabel="Replay step",
             yticks=[-1, 0, 1],

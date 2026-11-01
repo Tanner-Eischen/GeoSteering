@@ -236,6 +236,11 @@ def build_report(
         figure("strategy_comparison", 180)
     elif strict and state.get("complete"):
         raise ValueError("Completed strict report requires independent evaluation")
+    elif state.get("complete"):
+        text(
+            "Run complete; independent withheld-truth evaluation has not been saved for the selected run. "
+            "Its final truth-scored performance is unavailable."
+        )
     else:
         text(
             "Withheld truth evaluation unavailable until completion. This partial report contains estimated metrics only."
