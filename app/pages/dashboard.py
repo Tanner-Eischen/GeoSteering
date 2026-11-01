@@ -9,6 +9,7 @@ import streamlit as st
 from app.io.project_store import read_json
 from app.services.project_data import load_project_and_wells
 from app.ui.theme import render_page_header
+from app.ui.workspace import activate_project
 
 
 def render(project_root: str | None) -> None:
@@ -22,8 +23,12 @@ def render(project_root: str | None) -> None:
     if st.button("Load Case Study in a new workspace"):
         from tools.bootstrap_demo_project import bootstrap_demo_project
         workspace = Path("data") / "case_studies" / str(uuid4())
-        bootstrap_demo_project(workspace, workspace.parent / f"{workspace.name}_inputs", steps=0)
-        st.session_state["project_root"] = str(workspace.resolve())
+        try:
+            bootstrap_demo_project(workspace, workspace.parent / f"{workspace.name}_inputs", steps=0)
+        except (OSError, ValueError):
+            st.error("The new case-study workspace could not be created. Check filesystem access and retry to create a fresh workspace.")
+            return
+        activate_project(st.session_state, workspace.resolve())
         st.session_state["nav_target"] = "Data QC"
         st.rerun()
     if not project_root:

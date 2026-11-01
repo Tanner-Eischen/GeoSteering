@@ -5,11 +5,12 @@ from pathlib import Path
 import streamlit as st
 
 from app.io.project_store import read_json
-from app.services.operator_workflow import export_selected_report
+from app.services.operator_workflow import export_selected_report, run_label
 from app.services.project_data import load_project_and_wells
 from app.services.run_metrics import load_run_metrics
 from app.services.run_paths import active_run_id, run_root
 from app.ui.theme import render_page_header
+from app.ui.workspace import remember_selected_run, selected_run_choice
 
 
 def render(project_root: str | None) -> None:
@@ -32,11 +33,15 @@ def render(project_root: str | None) -> None:
     run_selection_key = f"report_run_{root.resolve()}"
     target = st.session_state.pop("report_target", None)
     if target and target.get("project_root") == str(root.resolve()) and target.get("run_id") in run_ids:
-        st.session_state[run_selection_key] = target["run_id"]
+        remember_selected_run(st.session_state, root, target["run_id"])
     selected_run = active_run_id(root)
     if run_ids:
-        selected_run = st.selectbox("Run", run_ids, index=run_ids.index(selected_run) if selected_run in run_ids else 0,
-                                    key=run_selection_key)
+        st.session_state[run_selection_key] = selected_run_choice(st.session_state, root, run_ids, selected_run)
+        selected_run = st.selectbox("Run", run_ids, index=None,
+                                    format_func=lambda identifier: run_label(root, identifier),
+                                    key=run_selection_key,
+                                    on_change=lambda: remember_selected_run(st.session_state, root, st.session_state.get(run_selection_key)))
+        remember_selected_run(st.session_state, root, selected_run)
     else:
         st.info("Initialize a saved run before exporting from this page. Legacy CLI export remains available.")
         return
@@ -80,7 +85,9 @@ def render(project_root: str | None) -> None:
             st.error(str(exc))
             return
         st.success(f"Report exported: {out}")
-        st.code(str(out))
+        st.download_button("Download selected report", data=out.read_bytes(), file_name=out.name,
+                           mime="application/pdf", on_click="ignore")
+        st.caption("This download contains exactly the selected exported run/plan and filters. Change the selection and export again for a new artifact.")
     if c4.button("Back to Steering"):
         st.session_state["nav_target"] = "Steering Console"
         st.rerun()

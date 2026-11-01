@@ -13,7 +13,7 @@ from app.alg.interpretation_model import evaluate_piecewise_linear
 from app.io.project_store import atomic_write_json
 from app.services import operator_workflow, runs
 from app.services.evaluation import evaluate_completed_run
-from app.services.operator_workflow import export_selected_report, load_operator_view, submit_steering
+from app.services.operator_workflow import export_selected_report, load_operator_view, run_label, submit_steering
 from app.services.run_paths import run_root
 from app.services.runs import initialize_run
 from tests.test_run_history import prepare_run
@@ -57,6 +57,16 @@ def test_view_and_form_edit_retry_remain_bound_after_later_steps_and_active_swit
     assert submit_steering(root, **first_request) == first
     assert json_snapshot(root) == before
     assert runs.active_run_id(root) == alternate.run_id
+
+
+def test_selector_label_is_stable_while_current_progress_advances(tmp_path):
+    root, _, _, _ = prepare_run(tmp_path)
+    selected = runs.active_run_id(root)
+    initial = run_label(root, selected)
+    submit_steering(root, **request(load_operator_view(root, selected)))
+    assert run_label(root, selected) == initial
+    assert "Replay" in initial and "123" in initial and selected[:8] in initial
+    assert load_operator_view(root, selected)["state"].step_index == 1
 
 
 def test_form_rejects_another_runs_displayed_interpretation_without_writes(tmp_path):

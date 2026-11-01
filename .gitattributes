@@ -4,12 +4,15 @@ data/sample_project/**/*.las linguist-vendored=true
 # Release provenance hashes exact bytes, including the tested line endings.
 # Preserve these bytes across Windows/Linux checkout and Git autocrlf settings.
 app/**/*.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
+app.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 tools/**/*.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 app/_release_source.json -text whitespace=trailing-space,space-before-tab,cr-at-eol
 scripts/*.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 tests/test_guided_workflow_resilience.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 tests/test_step_idempotency.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 tests/test_operator_workflow.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
+tests/test_workspace_session.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
+tests/test_atomic_windows_replace.py -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/implementation/*.md -text whitespace=trailing-space,space-before-tab,cr-at-eol
 reports/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 reports/**/*.pdf -diff

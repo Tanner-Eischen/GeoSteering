@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Any, List, Sequence, TypeVar
@@ -34,7 +35,20 @@ def atomic_write_json(path: Path, payload: Any) -> None:
     ) as tmp:
         json.dump(payload, tmp, sort_keys=True, indent=2, ensure_ascii=True)
         tmp_path = Path(tmp.name)
-    tmp_path.replace(path)
+    try:
+        for attempt in range(6):
+            try:
+                tmp_path.replace(path)
+                break
+            except PermissionError as exc:
+                # Windows scanners/readers can briefly hold a newly written
+                # destination against replacement. Keep the old file intact;
+                # retry only this atomic rename and fail if access stays denied.
+                if getattr(exc, "winerror", None) not in {5, 32, 33} or attempt == 5:
+                    raise
+                time.sleep(0.025 * (2 ** attempt))
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
 
 def read_json(path: Path, default: Any | None = None) -> Any:

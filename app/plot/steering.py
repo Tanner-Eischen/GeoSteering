@@ -19,7 +19,8 @@ def build_active_window_figure(
     fig = go.Figure()
     for curve in curves:
         if curve in window.columns:
-            fig.add_trace(go.Scatter(x=window["md_ft"], y=window[curve], mode="lines", name=curve))
+            fig.add_trace(go.Scatter(x=window["md_ft"], y=window[curve],
+                                    mode="lines+markers" if len(window) == 1 else "lines", name=curve))
     fig.add_vline(x=revealed_md_ft, line_dash="dash", line_color="#c62828")
     fig.update_layout(height=280, xaxis_title="MD (ft)", yaxis_title="Curve value", title="Active well window")
     return fig

@@ -11,4 +11,4 @@
 - Numeric scoring approximates the nonlinear truth field at a documented integration resolution. Estimated piecewise-linear zone scores use exact interval integration.
 - Project storage is local and intended for a single writer. There is no multi-user database, operational deployment, or production certification.
 - Older projects without spatial references can be inspected, but cannot establish common-datum interpretation or steering performance until reimported with explicit references.
-- Browser/platform UI verification is outside this implementation's verification scope. Automated scientific, service and report checks do not prove every interactive workflow behaves correctly.
+- Browser verification is limited to the recorded local Windows/Chrome desktop, half-width and narrow-viewport profile in `reports/browser-qa-2026-11-01/`. It does not establish other browsers/devices, multi-user behavior, deployment readiness or operational drilling fitness. Earlier packets retain their historical unverified-UI status.

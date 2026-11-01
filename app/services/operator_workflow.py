@@ -13,6 +13,17 @@ from app.services.runs import advance_run
 from app.sim.sim_store import load_simulation_config, load_simulation_state
 
 
+def run_label(project_root, run_id):
+    """Human-readable selector label while retaining the full ID as its value."""
+    try:
+        config = load_simulation_config(project_root, run_id)
+        # Selector labels are cached by Streamlit. Keep them immutable; current
+        # progress belongs in the freshly loaded state cards, not this label.
+        return f"{config.mode.title()} | seed {config.seed} | {config.scenario_version} | {run_id[:8]}"
+    except (FileNotFoundError, ValueError):
+        return f"Unavailable run | {run_id[:8]}"
+
+
 def load_operator_view(project_root, run_id):
     """Load every displayed run document using the same explicit selection."""
     if not run_id:

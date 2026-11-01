@@ -91,12 +91,15 @@ This project is available under the [MIT License](LICENSE).
 
 ## Verified release package
 
-The current 0.2.2 source binds steering/report handlers to explicit selected runs
-and captured interpretation versions, with [non-UI handler/export/reopen acceptance](docs/implementation/GS02_OPERATOR_WORKFLOW_2026-11-01.md).
-It retains opt-in durable advance requests with explicit run/step guards. See
+The current 0.2.3 source includes actual local browser workflow verification,
+project-session isolation, selected PDF/comparison downloads, visible synthetic
+calibration limits and guarded advances. See the [versioned browser QA report](reports/browser-qa-2026-11-01/README.md).
+The [non-UI handler/export/reopen acceptance](docs/implementation/GS02_OPERATOR_WORKFLOW_2026-11-01.md)
+remains separately recorded. For the request contract, see
 [request contract, compatibility and local validation](docs/implementation/GS02_IDEMPOTENCY_2026-11-01.md).
-Browser duplicate-submit behavior remains unverified. Original 0.2.0 evidence
-retains its historical source identity.
+Browser coverage is the recorded local Chrome desktop/half/narrow viewport
+profile; it is not field validation or general browser/device certification.
+Original 0.2.0 evidence retains its historical source identity.
 
 The 0.2.0 release uses platform-specific hash locks, exact packaged-source
 provenance, and a read-only verifier for saved and relocated projects. See

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from app.plot.log_tracks import build_log_tracks_figure
+from app.plot.steering import build_active_window_figure
 
 
 def _logs_df() -> pd.DataFrame:
@@ -39,4 +40,12 @@ def test_window_render_small_and_large() -> None:
     assert fig_small is not None
     assert fig_large is not None
     assert meta_large.rendered_points >= meta_small.rendered_points
+
+
+def test_single_acquired_reading_is_visible_and_excludes_future_data():
+    logs = pd.DataFrame({"md_ft": [2000.0, 4000.0, 6000.0], "GR": [80.0, 35.0, 999999.0]})
+    figure = build_active_window_figure(logs, 4000.0, 500.0, ["GR"])
+    assert list(figure.data[0].x) == [4000.0]
+    assert list(figure.data[0].y) == [35.0]
+    assert "markers" in figure.data[0].mode
 

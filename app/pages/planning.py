@@ -73,9 +73,10 @@ def render(project_root: str | None) -> None:
         st.session_state["planning_preview_params"] = params.model_dump(mode="json")
         st.session_state["planning_preview_max_dls"] = float(max_dls)
         st.session_state["planning_preview_name"] = plan_name
+        st.session_state["planning_preview_root"] = str(root.resolve())
         st.success(f"Generated {len(result.stations)} stations.")
 
-    stations = st.session_state.get("planning_preview_stations")
+    stations = st.session_state.get("planning_preview_stations") if st.session_state.get("planning_preview_root") == str(root.resolve()) else None
     exceed = st.session_state.get("planning_preview_exceed", [])
     if isinstance(stations, pd.DataFrame) and not stations.empty:
         st.markdown("#### Preview")

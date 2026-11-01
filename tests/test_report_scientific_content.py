@@ -79,6 +79,22 @@ def test_midrun_report_withholds_truth_and_applies_selection(tmp_path):
         build_report(project, plan_id="does-not-exist")
 
 
+def test_filtered_report_keeps_selected_well_hashes_and_excludes_foreign_wells(tmp_path):
+    from app.services.project_data import load_project_and_wells
+
+    run_case_study(tmp_path / "filtered", steps=1)
+    project = tmp_path / "filtered/project"
+    artifacts = json.loads((project / "exports/artifacts.json").read_text())
+    _, wells = load_project_and_wells(project)
+    selected = next(well for well in wells if well.name == "offset_01")
+    manifest = json.loads((project / "runs" / artifacts["run_id"] / "manifest.json").read_text())
+    report = build_report(project, run_id=artifacts["run_id"], include_wells=[selected.name])
+    text = " ".join(page.extract_text() or "" for page in PdfReader(report).pages)
+    path = f"inputs/wells/{selected.well_id}/logs.parquet"
+    assert path in text and manifest["input_hashes"][path] in text
+    assert all(well.well_id not in text for well in wells if well.well_id != selected.well_id)
+
+
 def test_repeated_seed_produces_identical_numerical_summary(completed, tmp_path):
     project, _, _ = completed
     run_case_study(tmp_path / "repeat")

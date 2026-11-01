@@ -9,6 +9,7 @@ from app.io import import_well_folder
 from app.io.project_store import create_project, load_project
 from app.pages import correlation_panel, dashboard, data_qc, planning, report_export, steering_console, well_viewer
 from app.ui.theme import apply_theme, render_page_header
+from app.ui.workspace import activate_project
 
 PAGES = {
     "Dashboard": dashboard.render,
@@ -32,16 +33,20 @@ def _sidebar_project_controls() -> str | None:
     if st.sidebar.button("Open Project"):
         root = Path(open_path)
         if (root / "project.json").exists():
-            st.session_state["project_root"] = str(root)
+            activate_project(st.session_state, root)
             st.sidebar.success(f"Opened {root}")
         else:
             st.sidebar.error(f"project.json not found under {root}")
 
     if st.sidebar.button("Create Project"):
         root = Path(create_path)
-        project = create_project(root, create_name)
-        st.session_state["project_root"] = str(root)
-        st.sidebar.success(f"Created project {project.name}")
+        try:
+            project = create_project(root, create_name)
+        except (OSError, ValueError) as exc:
+            st.sidebar.error(f"Could not create project: {exc}")
+        else:
+            activate_project(st.session_state, root)
+            st.sidebar.success(f"Created project {project.name}")
 
     return st.session_state.get("project_root")
 

@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "status": "local_wave2_browser_qa_passed",
+  "verified_at_utc": "2026-11-01T12:01:17.925851+00:00",
+  "release_version": "0.2.3",
+  "source_snapshot": {
+    "base_revision": "9176b26a74972cdcaa8d0b41d1737bfa2c3fe8a3",
+    "dirty_snapshot": true,
+    "tested_revision": null,
+    "packaged_python_fingerprint": "b4446332b4be36dbfe6bbdc80947a2f8b6eee8e38dabdca009a891729e3370f0",
+    "packaged_python_files": 79,
+    "ui_entrypoint_sha256": "45a2bf30e819e1a96f3047c41c58b97599f6494d993e321062070298d4088d0a",
+    "meaning": "Exact tested pre-commit bytes; later commit identity does not relabel historical fixture creation provenance"
+  },
+  "profile": {
+    "os": "Windows",
+    "python": "3.12.14",
+    "streamlit": "1.66.1",
+    "playwright_cli": "0.1.23",
+    "browser": "HeadlessChrome156.0.0.0",
+    "browser_control": "Separate named Playwright CLI browser sessions; actual controls, not handler/UI mocks",
+    "server": "Separate local Streamlit process; cold restarts after source changes; watcher disabled for a frozen source profile",
+    "dependency_profile": "Separate installed application runtime reusing61previously locked dependencies; not a new independent clean install"
+  },
+  "backend_tests": {
+    "tests": 147,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 297.144
+  },
+  "browser_checks": {
+    "fresh_case_dashboard_load": true,
+    "qc_valid_wells": 4,
+    "qc_warnings": 0,
+    "offsets_inspected": 3,
+    "offset_interpretation_saved": true,
+    "landing_preview_stations": 73,
+    "landing_dls_exceedances": 0,
+    "landing_dls_limit_deg_per_100ft": 6,
+    "actual_gr_res_max_observed_md_before_ft": 2000,
+    "actual_gr_res_max_observed_md_after_ft": 2050,
+    "real_double_click_result": {
+      "steps": 1,
+      "decisions": 1,
+      "receipts": 1
+    },
+    "causal_commands": [
+      "HOLD",
+      "BUILD",
+      "DROP"
+    ],
+    "requested_inclinations_deg": [
+      90,
+      180,
+      0
+    ],
+    "effective_inclinations_deg": [
+      90,
+      95,
+      85
+    ],
+    "fork_parent_files_unchanged": 30,
+    "run_context_survives_sidebar_keyboard_and_back": true,
+    "report_selection_removes_stale_download": true,
+    "actual_browser_pdf_downloads": 3,
+    "actual_comparison_csv_download": true,
+    "cold_reopen_persisted_causal_step": 3,
+    "cold_reopen_md_ft": 7000,
+    "calibration_and_synthetic_limits_visible": true,
+    "singleton_current_reading_markers": 2,
+    "final_console_errors": 0,
+    "final_console_warnings": 0
+  },
+  "responsive": [
+    {
+      "width": 1440,
+      "height": 1000,
+      "document_scroll_width": 1440,
+      "main_client_width": 1140,
+      "main_scroll_width": 1140
+    },
+    {
+      "width": 900,
+      "height": 900,
+      "document_scroll_width": 900,
+      "main_client_width": 600,
+      "main_scroll_width": 600
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "document_scroll_width": 390,
+      "main_client_width": 390,
+      "main_scroll_width": 390,
+      "sidebar_navigation_and_pdf_download": true
+    }
+  ],
+  "keyboard": {
+    "radio_arrow_navigation": true,
+    "tab_presses_to_export": 14,
+    "enter_export": true,
+    "tab_presses_to_download": 2,
+    "enter_actual_pdf_download": true,
+    "download_run_prefix": "e928f8d1",
+    "visible_focus_inspected": true
+  },
+  "pdf_artifact_qa": {
+    "reports": {
+      "partial.pdf": {
+        "sha256": "188710795ef4b9959b405918ab7c88a1ecd9ce5272c654eed8967961dfa3298e",
+        "pages": 4,
+        "figures": 6,
+        "selected_input_hash_paths": 20,
+        "all_pages_rendered_and_individually_inspected": true,
+        "page_png_sha256": {
+          "partial-1.png": "c48885c9bf81eebe6f7e375429c6af5bb7d55829c328f1ac35ae39ad843bea86",
+          "partial-2.png": "108e87d8f890b6d575e90d19f8b866eb07fa8a3ddd29efee175c40c62103f6ef",
+          "partial-3.png": "99a5902e276221ab83ab20900adf37c2ed004c5fe0a142db5dc4335ecf71760a",
+          "partial-4.png": "d9639c54aecc3973ac2d677d80717806c20ba45d5375a36245e96c20c962b4c1"
+        }
+      },
+      "complete-unevaluated.pdf": {
+        "sha256": "fc99db96cb631891e38d5cd43f208c6d4ed44d52e30852b4f21e84d35837c720",
+        "pages": 4,
+        "figures": 6,
+        "selected_input_hash_paths": 20,
+        "all_pages_rendered_and_individually_inspected": true,
+        "page_png_sha256": {
+          "unevaluated-1.png": "1efd99900e0a9f8f5d2a81b2de13be0e2588336ba91b2599868424d87460339f",
+          "unevaluated-2.png": "4623bc67e317805c67274baf97bdb9e07418994b9b2d611ee278e424238e307d",
+          "unevaluated-3.png": "c9c2aa6f210062b7a4b34b36a4d784e3a6b76bdd950eb62d33cb6cab4396dc5d",
+          "unevaluated-4.png": "e8a21a29075ca28291f68f1170bae65c2c97818203cce7b2ab6983b57616ab56"
+        }
+      },
+      "complete-evaluated.pdf": {
+        "sha256": "b2dfa18400c2fb655900e66a194809b04ea487f49d1e9658142241ceea3d96f0",
+        "pages": 5,
+        "figures": 7,
+        "selected_input_hash_paths": 20,
+        "all_pages_rendered_and_individually_inspected": true,
+        "page_png_sha256": {
+          "evaluated-1.png": "179f7f6e36da0c37fc40bf913615f9c5c3c7a9fba225d9fadf772597efcad500",
+          "evaluated-2.png": "7808a79def69419bbb6c8943a64b0fe482ea392fe07deda2439330fa555eadaa",
+          "evaluated-3.png": "f184215427b591db4a597ee63056484dc6660b667e5232dfabcb9e38e63fc241",
+          "evaluated-4.png": "e2925ada7c43ce19528075702c4e7ed23dc989ebd5d15e7dd08096d1c3df758c",
+          "evaluated-5.png": "562cd134abae91c9de213428c1cc3c2b905c55051d5150aecd3fc6f6abb57c54"
+        }
+      }
+    },
+    "pages_inspected": 13,
+    "renderer": "Poppler pdftoppm100dpi",
+    "findings": "Readable text,tables,hashes,axes,legends and footers; no observed clipping/overlap. Display-font fallback messages produced no visible missing glyphs."
+  },
+  "science": {
+    "scenario_version": "structural_dip_01-v1",
+    "seed": 123,
+    "sensor": {
+      "kind": "known_signed_gamma_ray",
+      "center_api": 80,
+      "gradient_api_per_ft": 2,
+      "noise_standard_deviation_api": 0.6,
+      "clipping_api": [
+        20,
+        160
+      ]
+    },
+    "uncertainty": "Scenario-assumed band,not calibrated confidence",
+    "evaluated_lateral_ft": 5000,
+    "paired_reference_percent_in_zone": {
+      "hold": 38.07162079659706,
+      "guided": 97.17426567844367
+    },
+    "qualification": "Single synthetic scenario/seed; separate paired comparison,not field validation. Manual three-command UI exercise is not a policy-performance study."
+  },
+  "audit": {
+    "gitleaks_version": "8.30.1",
+    "configuration": "Official checksum-verified vendor defaults; --all refs/history;100%redaction; inline allowances and project ignore suppressions disabled",
+    "pre_commit_refs": [
+      "refs/heads/main 9176b26a74972cdcaa8d0b41d1737bfa2c3fe8a3",
+      "refs/remotes/origin/HEAD 14ffc90dfd547cfc1217d1ce3a059b4928639dc2",
+      "refs/remotes/origin/main 14ffc90dfd547cfc1217d1ce3a059b4928639dc2"
+    ],
+    "pre_commit_history_findings": 0,
+    "restricted_data": "No rawVolve evertracked; only data/volve/README.md. Historical LAS/CSV are generated samples. Rawsource/project and private traces excluded.",
+    "staged_tree_scan": "Required successful before commit; private reports retained under ignored output; root repeats post-commit history audit before remote publication",
+    "staged_scan_false_positive_classification": "One vendor generic-api-key match was the synthetic gamma-ray calibration text,not a credential. Verified against implemented constants; represented as structured numeric sensor metadata. No suppressions or exceptions added."
+  },
+  "limits": [
+    "Local Chrome desktop/half/narrow viewport coverage only; no real mobile hardware or broad cross-browser/WCAG certification",
+    "Single-writer local workbench; no multi-process writer guarantee",
+    "No remote deployment or operational drilling validation",
+    "No sensor research,robustness study,paidmodel call orcloudplan change"
+  ],
+  "remote_publication": "Root release work owns visibility,push and deployment; this record is local QA",
+  "assets": {
+    "comparison.csv": "92acd5073e40940cf31d19bcf3adfdb39e74544c0a8cf2696584cab7dd34c6fa",
+    "complete-evaluated.pdf": "b2dfa18400c2fb655900e66a194809b04ea487f49d1e9658142241ceea3d96f0",
+    "complete-unevaluated.pdf": "fc99db96cb631891e38d5cd43f208c6d4ed44d52e30852b4f21e84d35837c720",
+    "partial.pdf": "188710795ef4b9959b405918ab7c88a1ecd9ce5272c654eed8967961dfa3298e",
+    "README.md": "efc6a551138863e32c208a1c9c3258d0a4ae1262af01d273e24b006f7f243357",
+    "screenshots/comparison.png": "6c6bc34aef2baec480caf3a86550d4634c60414aa4381115c040f0fe818ac95e",
+    "screenshots/desktop.png": "3378ed43187fe19cb6cd91ece37b3b47ef7f86d29a368c89bd432aa06f74f95e",
+    "screenshots/half-width.png": "6cddaec0f77e36048fc54bbce6ecc345a8e9eeffec7e2f0f2588505f1068e804",
+    "screenshots/keyboard-focus.png": "190e55a54db942c17b7f1d93d37208d242b4bee48fc07a1c270883e897fe8f55",
+    "screenshots/mobile-download.png": "82f7b517c278ea8b500375c470016a96cc016f2437b60f3636dc570ed6867e81",
+    "screenshots/mobile-reading.png": "01dc2630dbb209a2e3f8ee6f9a957473e1ef65acaca416812d58c69f8112d8ac",
+    "screenshots/mobile-state.png": "0ba59efc0b55ca1ef085c32f1b06132267ae1948d40a8b472eb33cac7cd59d1d"
+  }
+}

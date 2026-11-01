@@ -115,10 +115,10 @@ def build_report(
     table(rows, [100, 80, 60, 240])
     if manifest.get("input_hashes"):
         heading("Input provenance (SHA-256)")
-        selected_names = {well.name for well in context["wells"]}
+        selected_identifiers = {value for well in context["wells"] for value in (well.name, well.well_id)}
         for name, digest in manifest["input_hashes"].items():
             parts = Path(name).parts
-            if include_wells is None or "wells" not in parts or parts[parts.index("wells") + 1] in selected_names:
+            if include_wells is None or "wells" not in parts or parts[parts.index("wells") + 1] in selected_identifiers:
                 text(f"{name}: {digest}")
 
     heading("Correlation and markers")

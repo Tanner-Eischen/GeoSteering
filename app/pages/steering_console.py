@@ -10,13 +10,14 @@ from app.alg.interpretation_model import evaluate_piecewise_linear
 from app.io.project_store import read_json
 from app.plot.steering import build_active_window_figure, build_kpi_trend_figure
 from app.services.baseline import estimate_offset_baseline
-from app.services.operator_workflow import load_operator_view, submit_steering
+from app.services.operator_workflow import load_operator_view, run_label, submit_steering
 from app.services.project_data import load_project_and_wells
 from app.services.run_paths import active_run_id
 from app.services.runs import fork_run, initialize_run
 from app.sim.sim_models import SimulationConfig
 from app.sim.sim_store import load_simulation_config
 from app.ui.theme import render_page_header
+from app.ui.workspace import remember_selected_run, selected_run_choice
 
 
 def render(project_root: str | None) -> None:
@@ -32,7 +33,7 @@ def render(project_root: str | None) -> None:
     run_selection_key = f"steering_run_{root.resolve()}"
     pending_run = st.session_state.pop(f"{run_selection_key}_pending", None)
     if pending_run is not None:
-        st.session_state[run_selection_key] = pending_run
+        remember_selected_run(st.session_state, root, pending_run)
     project, wells = load_project_and_wells(root)
     if not wells:
         st.info("Import wells before starting a replay.")
@@ -84,15 +85,21 @@ def render(project_root: str | None) -> None:
         st.info("Initialize a replay with offset formation picks. Old MD-only interpretations require a new spatial run.")
         return
     active = active_run_id(root)
+    st.session_state[run_selection_key] = selected_run_choice(st.session_state, root, run_ids, active)
     selected_run = st.selectbox("Saved steering run", run_ids,
-                                index=run_ids.index(active) if active in run_ids else 0,
-                                key=run_selection_key)
+                                index=None,
+                                format_func=lambda identifier: run_label(root, identifier),
+                                key=run_selection_key,
+                                on_change=lambda: remember_selected_run(st.session_state, root, st.session_state.get(run_selection_key)))
+    remember_selected_run(st.session_state, root, selected_run)
     try:
         view = load_operator_view(root, selected_run)
     except (FileNotFoundError, ValueError) as exc:
         st.error(str(exc))
         return
     config, state, latest = view["config"], view["state"], view["interpretation"]
+    if config.scenario_version == "structural_dip_01-v1":
+        st.caption("Synthetic sensor calibration: GR = 80 + 2 × signed center distance (ft), with 0.6 API Gaussian noise, clipped to 20–160 API. This known signed signal and one 2D scenario are not field validation.")
     if latest is None or not all(point.x_ft is not None for point in latest.top_control_points):
         st.warning("This legacy run has an MD-based interpretation. Initialize a new spatial replay from offset picks.")
         return
@@ -169,7 +176,7 @@ def render(project_root: str | None) -> None:
     if state.complete:
         st.markdown("#### Completed retrospective evaluation")
         evaluation = read_json(view["scope"] / "evaluation" / "replay.json", default={})
-        if st.button("Evaluate completed replay against withheld truth"):
+        if st.button("Evaluate completed run against withheld truth"):
             from app.io.project_store import atomic_write_json
             from app.services.evaluation import evaluate_completed_run
             try:
@@ -188,7 +195,23 @@ def render(project_root: str | None) -> None:
         comparison = read_json(view["scope"] / "evaluation" / "comparison.json", default={})
         if comparison:
             st.caption("These are separate causal runs from the same landing state. Their bounded commands change their simulated paths.")
-            st.dataframe(pd.DataFrame({name: value["metrics"] for name, value in comparison["runs"].items()}).T)
+            st.caption("Single synthetic scenario/seed with known signed GR calibration; not field-validated steering or an operational safety claim.")
+            comparison_frame = pd.DataFrame({name: value["metrics"] for name, value in comparison["runs"].items()}).T
+            headline = ["percent_in_zone", "in_zone_length_ft", "evaluated_length_ft", "dls_violation_count", "avg_center_distance_ft"]
+            comparison_frame = comparison_frame[headline + [name for name in comparison_frame if name not in headline]]
+            st.dataframe(comparison_frame, column_config={
+                "percent_in_zone": st.column_config.NumberColumn("Synthetic lateral in-zone (%)", format="%.3f"),
+                "in_zone_length_ft": st.column_config.NumberColumn("In-zone length (ft)", format="%.1f"),
+                "evaluated_length_ft": st.column_config.NumberColumn("Evaluated lateral (ft)", format="%.0f"),
+                "avg_center_distance_ft": st.column_config.NumberColumn("Mean center distance (ft)", format="%.3f"),
+            })
+            comparison_download = comparison_frame.assign(
+                scenario_version=comparison["scenario_version"], seed=comparison["seed"],
+                scope="single synthetic scenario; known signed GR calibration; not field validation",
+            )
+            st.download_button("Download synthetic comparison CSV", data=comparison_download.to_csv().encode("utf-8"),
+                               file_name=f"synthetic-comparison-{selected_run}-seed-{comparison['seed']}.csv",
+                               mime="text/csv", on_click="ignore")
     if st.button("Open Report Export"):
         st.session_state["report_target"] = {"project_root": str(root.resolve()), "run_id": selected_run}
         st.session_state["nav_target"] = "Report Export"
