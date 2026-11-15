@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "study_id": "robustness-v1",
+  "policy_version": "reference-guided-with-validity-gate-v1",
+  "description": "Descriptive paired evaluation on predefined synthetic geology and sensor stresses. Evaluation configurations are held out from policy development, not a random sample of real geology.",
+  "development_seeds": [101, 103],
+  "evaluation_seeds": [1001, 1003, 1007, 1009, 1013],
+  "cases": [
+    {
+      "case_id": "dev_reference", "label": "Reference", "split": "development",
+      "description": "Original geometry and sensor; software and reference control only.",
+      "geology": {}, "sensor": {}
+    },
+    {
+      "case_id": "dev_flat", "label": "Flat control", "split": "development",
+      "description": "Flat, undisturbed target; a feedback policy should not create a placement advantage.",
+      "geology": {"regional_dip": 0.0, "disturbance_height_ft": 0.0}, "sensor": {}
+    },
+    {
+      "case_id": "eval_reverse", "label": "Reverse dip", "split": "evaluation",
+      "description": "Upward regional dip and upward structural change, with nominal sensor calibration.",
+      "geology": {"regional_dip": -0.008, "disturbance_height_ft": -18.0, "disturbance_width_ft": 450.0}, "sensor": {}
+    },
+    {
+      "case_id": "eval_steep", "label": "Steeper / narrower", "split": "evaluation",
+      "description": "Stronger regional dip and an 18-ft target; increased measurement noise.",
+      "geology": {"regional_dip": 0.014, "disturbance_height_ft": 18.0, "disturbance_width_ft": 500.0, "thickness_ft": 18.0},
+      "sensor": {"noise_std_api": 1.2}
+    },
+    {
+      "case_id": "eval_bias", "label": "Biased sensor", "split": "evaluation",
+      "description": "Unmodeled +12 API bias, fivefold noise and a 16-ft target.",
+      "geology": {"regional_dip": 0.006, "disturbance_height_ft": 32.0, "disturbance_width_ft": 250.0, "thickness_ft": 16.0},
+      "sensor": {"bias_api": 12.0, "noise_std_api": 3.0}
+    },
+    {
+      "case_id": "eval_gradient", "label": "Calibration mismatch", "split": "evaluation",
+      "description": "The controller retains its 2 API/ft calibration while the sensor uses 1.2 API/ft and -4 API bias.",
+      "geology": {"regional_dip": 0.009, "disturbance_height_ft": -22.0, "disturbance_width_ft": 400.0, "thickness_ft": 20.0},
+      "sensor": {"gradient_api_per_ft": 1.2, "bias_api": -4.0, "noise_std_api": 2.0}
+    },
+    {
+      "case_id": "eval_missing", "label": "Missing measurements", "split": "evaluation",
+      "description": "35% step-keyed missing observations with a sharper structural change.",
+      "geology": {"regional_dip": 0.004, "disturbance_height_ft": 35.0, "disturbance_width_ft": 200.0, "thickness_ft": 20.0},
+      "sensor": {"missing_probability": 0.35, "noise_std_api": 2.0}
+    },
+    {
+      "case_id": "eval_delay", "label": "Delayed measurements", "split": "evaluation",
+      "description": "Measurements arrive three 50-ft steps late, retaining their original acquisition pose.",
+      "geology": {"regional_dip": 0.007, "disturbance_height_ft": 30.0, "disturbance_width_ft": 150.0, "thickness_ft": 16.0},
+      "sensor": {"delay_steps": 3, "noise_std_api": 1.2}
+    },
+    {
+      "case_id": "eval_thin_sharp", "label": "Thin / abrupt change", "split": "evaluation",
+      "description": "An 8-ft target and 38-ft change over 80 ft challenge the command interval and curvature limits.",
+      "geology": {"regional_dip": -0.004, "disturbance_height_ft": 38.0, "disturbance_width_ft": 80.0, "thickness_ft": 8.0},
+      "sensor": {"noise_std_api": 2.0}
+    },
+    {
+      "case_id": "eval_saturation", "label": "Saturation / large change", "split": "evaluation",
+      "description": "An 85-ft abrupt change and narrower instrument range remove usable measurements; HOLD is the fixed fallback.",
+      "geology": {"regional_dip": 0.006, "disturbance_height_ft": 85.0, "disturbance_width_ft": 120.0, "thickness_ft": 14.0},
+      "sensor": {"noise_std_api": 2.0, "clip_min_api": 60.0, "clip_max_api": 105.0}
+    }
+  ]
+}

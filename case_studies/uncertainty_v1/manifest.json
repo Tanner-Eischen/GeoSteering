@@ -1,0 +1,161 @@
+{
+  "cases": [
+    {
+      "case_id": "dev_linear",
+      "description": "Mild linear dip without a structural change; nominal sensor.",
+      "geology": {
+        "disturbance_height_ft": 0.0,
+        "regional_dip": 0.003,
+        "thickness_ft": 24.0
+      },
+      "label": "Linear control",
+      "sensor": {},
+      "split": "development"
+    },
+    {
+      "case_id": "dev_smooth",
+      "description": "A small gradual structural transition, with exact synthetic offset picks.",
+      "geology": {
+        "disturbance_height_ft": 8.0,
+        "disturbance_width_ft": 700.0,
+        "disturbance_x_ft": 2300.0,
+        "regional_dip": 0.002,
+        "thickness_ft": 28.0
+      },
+      "label": "Smooth control",
+      "sensor": {},
+      "split": "development"
+    },
+    {
+      "case_id": "eval_nominal",
+      "description": "New upward dip and moderate upward transition with nominal sensor calibration.",
+      "geology": {
+        "disturbance_height_ft": -14.0,
+        "disturbance_width_ft": 600.0,
+        "disturbance_x_ft": 2500.0,
+        "regional_dip": -0.0065,
+        "thickness_ft": 22.0
+      },
+      "label": "Nominal reverse dip",
+      "sensor": {},
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_noise",
+      "description": "Noise rises to 4 API while the ensemble retains its predeclared likelihood settings.",
+      "geology": {
+        "disturbance_height_ft": 20.0,
+        "disturbance_width_ft": 450.0,
+        "disturbance_x_ft": 3000.0,
+        "regional_dip": 0.0105,
+        "thickness_ft": 26.0
+      },
+      "label": "Higher measurement noise",
+      "sensor": {
+        "noise_std_api": 4.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_bias",
+      "description": "An undisclosed +8 API sensor bias tests conditional calibration under model mismatch.",
+      "geology": {
+        "disturbance_height_ft": -16.0,
+        "disturbance_width_ft": 350.0,
+        "disturbance_x_ft": 2600.0,
+        "regional_dip": -0.003,
+        "thickness_ft": 18.0
+      },
+      "label": "Calibration bias",
+      "sensor": {
+        "bias_api": 8.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_missing",
+      "description": "40% missing GR values; missing steps propagate without a likelihood update.",
+      "geology": {
+        "disturbance_height_ft": 22.0,
+        "disturbance_width_ft": 220.0,
+        "disturbance_x_ft": 3100.0,
+        "regional_dip": 0.0065,
+        "thickness_ft": 20.0
+      },
+      "label": "Missing measurements",
+      "sensor": {
+        "missing_probability": 0.4
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_thin_abrupt",
+      "description": "A 34-ft change over 90 ft challenges local smoothness assumptions; only center intervals are scored.",
+      "geology": {
+        "disturbance_height_ft": 34.0,
+        "disturbance_width_ft": 90.0,
+        "disturbance_x_ft": 2700.0,
+        "regional_dip": 0.0015,
+        "thickness_ft": 7.0
+      },
+      "label": "Thin / abrupt change",
+      "sensor": {
+        "noise_std_api": 1.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_saturation",
+      "description": "A large, abrupt structural change pushes fixed-HOLD observations into the known GR clipping regime.",
+      "geology": {
+        "disturbance_height_ft": 70.0,
+        "disturbance_width_ft": 130.0,
+        "disturbance_x_ft": 2450.0,
+        "regional_dip": 0.0045,
+        "thickness_ft": 12.0
+      },
+      "label": "Large change / saturation",
+      "sensor": {},
+      "split": "evaluation"
+    }
+  ],
+  "development_seeds": [
+    6901,
+    6907
+  ],
+  "engine_version": "signed-gr-particle-ensemble-v1",
+  "ensemble_seed_offset": 900000,
+  "evaluation_seeds": [
+    7001,
+    7003,
+    7007,
+    7009,
+    7013
+  ],
+  "forecast_horizons_ft": [
+    250.0,
+    500.0
+  ],
+  "nominal_level": 0.9,
+  "schema_version": 1,
+  "settings": {
+    "center_process_std_ft": 2.0,
+    "dip_bound": 0.15,
+    "dip_process_std": 0.002,
+    "forecast_grid_step_ft": 50.0,
+    "member_count": 256,
+    "model_discrepancy_std_api": 4.0,
+    "prior_center_std_ft": 10.0,
+    "prior_dip_std": 0.006,
+    "prior_thickness_relative_std": 0.1,
+    "process_reference_step_ft": 50.0,
+    "resample_ess_fraction": 0.5,
+    "sensor_center_api": 80.0,
+    "sensor_clip_max_api": 160.0,
+    "sensor_clip_min_api": 20.0,
+    "sensor_gradient_api_per_ft": 2.0,
+    "sensor_noise_std_api": 0.6,
+    "version": "spatial-particle-v1"
+  },
+  "study_id": "uncertainty-calibration-v1"
+}

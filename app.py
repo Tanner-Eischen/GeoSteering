@@ -7,7 +7,20 @@ import streamlit as st
 
 from app.io import import_well_folder
 from app.io.project_store import create_project, load_project
-from app.pages import correlation_panel, dashboard, data_qc, planning, report_export, steering_console, well_viewer
+from app.pages import (
+    correlation_panel,
+    dashboard,
+    data_qc,
+    decision_review,
+    evaluation,
+    planning,
+    report_export,
+    robustness,
+    run_comparison,
+    steering_console,
+    uncertainty,
+    well_viewer,
+)
 from app.ui.theme import apply_theme, render_page_header
 from app.ui.workspace import activate_project
 
@@ -18,35 +31,39 @@ PAGES = {
     "Correlation Panel": correlation_panel.render,
     "Planning": planning.render,
     "Steering Console": steering_console.render,
+    "Uncertainty": uncertainty.render,
+    "Decision Review": decision_review.render,
+    "Run Comparison": run_comparison.render,
+    "Evaluation": evaluation.render,
     "Report Export": report_export.render,
+    "Robustness Study": robustness.render,
 }
 
 
 def _sidebar_project_controls() -> str | None:
-    st.sidebar.header("Project Workspace")
-    st.sidebar.caption("Open an existing project or create a clean demo workspace.")
+    st.caption("Open an existing project or create a clean demo workspace.")
     current_root = st.session_state.get("project_root", "")
-    open_path = st.sidebar.text_input("Open project root", value=current_root, key="open_project_root")
-    create_path = st.sidebar.text_input("Create project root", value=current_root, key="create_project_root")
-    create_name = st.sidebar.text_input("Create project name", value="GeoSteering Demo", key="create_project_name")
+    open_path = st.text_input("Open project root", value=current_root, key="open_project_root")
+    create_path = st.text_input("Create project root", value=current_root, key="create_project_root")
+    create_name = st.text_input("Create project name", value="GeoSteering Demo", key="create_project_name")
 
-    if st.sidebar.button("Open Project"):
+    if st.button("Open Project"):
         root = Path(open_path)
         if (root / "project.json").exists():
             activate_project(st.session_state, root)
-            st.sidebar.success(f"Opened {root}")
+            st.success(f"Opened {root}")
         else:
-            st.sidebar.error(f"project.json not found under {root}")
+            st.error(f"project.json not found under {root}")
 
-    if st.sidebar.button("Create Project"):
+    if st.button("Create Project"):
         root = Path(create_path)
         try:
             project = create_project(root, create_name)
         except (OSError, ValueError) as exc:
-            st.sidebar.error(f"Could not create project: {exc}")
+            st.error(f"Could not create project: {exc}")
         else:
             activate_project(st.session_state, root)
-            st.sidebar.success(f"Created project {project.name}")
+            st.success(f"Created project {project.name}")
 
     return st.session_state.get("project_root")
 
@@ -59,41 +76,40 @@ def _sidebar_well_import_controls(project_root: str | None) -> None:
     if not (root / "project.json").exists():
         return
 
-    st.sidebar.subheader("Well Import")
-    st.sidebar.caption("Import folders with survey.csv, logs.las, and optional markers.csv.")
-    well_folder_input = st.sidebar.text_area(
+    st.caption("Import folders with survey.csv, logs.las, and optional markers.csv.")
+    well_folder_input = st.text_area(
         "Well folder paths",
         key="import_well_folder",
         help="One path per line or separated by semicolons. Quoted paths are supported.",
         placeholder='C:\\data\\wells\\Well_A\nC:\\data\\wells\\Well_B',
     )
-    well_name_input = st.sidebar.text_area(
+    well_name_input = st.text_area(
         "Well names (optional)",
         key="import_well_name",
         help="Optional. If provided, use one name per path in the same order.",
         placeholder="Well A\nWell B",
     )
 
-    if not st.sidebar.button("Import Well"):
+    if not st.button("Import Well"):
         return
 
     if not well_folder_input.strip():
-        st.sidebar.error("Provide a well folder path.")
+        st.error("Provide a well folder path.")
         return
 
     try:
         paths = _parse_well_paths(well_folder_input)
     except ValueError as exc:
-        st.sidebar.error(str(exc))
+        st.error(str(exc))
         return
 
     if not paths:
-        st.sidebar.error("Provide at least one well folder path.")
+        st.error("Provide at least one well folder path.")
         return
 
     names = _parse_well_names(well_name_input)
     if names and len(names) not in (1, len(paths)):
-        st.sidebar.error("Provide either one name or one name per path.")
+        st.error("Provide either one name or one name per path.")
         return
 
     results = []
@@ -119,9 +135,9 @@ def _sidebar_well_import_controls(project_root: str | None) -> None:
             errors.append(f"Import failed for {well_folder}: {exc}")
 
     if results:
-        st.sidebar.success(f"Imported {len(results)} well(s).")
+        st.success(f"Imported {len(results)} well(s).")
     if errors:
-        st.sidebar.error(" | ".join(errors))
+        st.error(" | ".join(errors))
 
     st.session_state["import_well_name"] = ""
     st.rerun()
@@ -150,50 +166,47 @@ def _parse_well_names(raw: str) -> list[str]:
 def _render_global_header(project_root: str | None) -> None:
     if not project_root:
         render_page_header(
-            "Geosteering Workbench MVP",
+            "GeoSteering Workbench",
             "Offline-first workflow for planning, correlation, steering simulation, and reporting.",
             chips=["No project loaded"],
         )
         return
     try:
         project = load_project(project_root)
-        active_well = project.active_well_id or "None"
+        active_well = next((well.name for well in project.wells if well.well_id == project.active_well_id), "None")
         render_page_header(
-            "Geosteering Workbench MVP",
-            "Training and portfolio software for deterministic geosteering workflow demos.",
-            chips=[f"Project: {project.name}", f"Root: {project_root}", f"Active well: {active_well}"],
+            "GeoSteering Workbench",
+            "Interpret geology. Review the next command. Evaluate the evidence.",
+            chips=[f"Project: {project.name}", f"Active well: {active_well}"],
         )
     except Exception as exc:
         render_page_header(
-            "Geosteering Workbench MVP",
+            "GeoSteering Workbench",
             "Project root is set, but loading failed.",
             chips=[f"Error: {exc}"],
         )
 
 
 def main() -> None:
-    st.set_page_config(page_title="Geosteering Workbench MVP", layout="wide")
+    st.set_page_config(page_title="GeoSteering Workbench", layout="wide")
     apply_theme()
 
-    project_root = _sidebar_project_controls()
-    _sidebar_well_import_controls(project_root)
-
+    st.sidebar.header("GeoSteering")
     if "nav_target" in st.session_state and st.session_state["nav_target"] in PAGES:
-        st.session_state["sidebar_page"] = st.session_state["nav_target"]
-        del st.session_state["nav_target"]
-
-    st.sidebar.markdown("---")
+        st.session_state["sidebar_page"] = st.session_state.pop("nav_target")
     if "sidebar_page" not in st.session_state:
         st.session_state["sidebar_page"] = "Dashboard"
     page_name = st.sidebar.radio(
-        "Page",
-        options=list(PAGES.keys()),
-        key="sidebar_page",
-        help="Use these workflow steps in order.",
+        "Page", options=list(PAGES), key="sidebar_page",
+        help="Follow the project workflow or explore the published robustness study.",
     )
-    st.sidebar.markdown("---")
-    st.sidebar.warning("Training and portfolio tool. Not validated for live operations.")
-    st.sidebar.caption("No WITSML ingestion in MVP. No guarantees about well safety or operational compliance.")
+    st.sidebar.divider()
+    with st.sidebar.expander("Project workspace", expanded=not bool(st.session_state.get("project_root"))):
+        project_root = _sidebar_project_controls()
+    if project_root:
+        with st.sidebar.expander("Import well data", expanded=False):
+            _sidebar_well_import_controls(project_root)
+    st.sidebar.caption("Training and portfolio software · synthetic steering is not field validation.")
     _render_global_header(project_root)
     PAGES[page_name](project_root)
 

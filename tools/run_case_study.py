@@ -15,9 +15,9 @@ from app.plan.plan_export import export_plan_csv
 from app.plan.plan_generator import plan_to_target
 from app.plan.plan_store import save_plan
 from app.report.report_builder import build_report
-from app.services.baseline import estimate_offset_baseline
 from app.services.decisions import export_decision_log_csv
 from app.services.interpretations import get_latest_interpretation
+from app.services.prejob import save_prejob_model
 from app.services.project_data import load_project_and_wells, load_well_frames
 from app.services.run_metrics import load_run_metrics
 from app.services.run_paths import run_root
@@ -56,11 +56,15 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
         import_well_folder(project_root, sample_root / "wells" / name, name)
     project, wells = load_project_and_wells(project_root)
     offsets = [well.well_id for well in wells if well.well_id != project.active_well_id]
-    top, base, uncertainty = estimate_offset_baseline(project_root, offsets)
+    geological_model = save_prejob_model(project_root, offsets, active_well_id=project.active_well_id)
+    top = geological_model.interpretation.top_control_points
+    base = geological_model.interpretation.base_control_points
+    uncertainty = geological_model.interpretation.uncertainty.band_tvd_ft
     # Solve the landing from offset geometry, without reading the true horizon.
     params, planned = plan_to_target(top, base, dls_max_deg_per_100ft=6.0)
     plan = save_plan(
-        project_root, "Offset-informed landing and lateral", params, planned.stations, 6.0, planned.exceedances
+        project_root, "Offset-informed landing and lateral", params, planned.stations, 6.0, planned.exceedances,
+        geological_model=geological_model,
     )
     export_plan_csv(planned.stations, project_root / "exports" / "plan_demo.csv")
     config = SimulationConfig(
@@ -73,6 +77,7 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
         seed=seed,
         scenario_version=public["scenario_version"],
         plan_id=plan.plan_id,
+        geological_model=geological_model,
         hidden_truth_path=str((sample_root / "truth.json").resolve()),
     )
     state = initialize_run(project_root, config, top, base, uncertainty_band_tvd_ft=uncertainty)
@@ -97,6 +102,8 @@ def build_case_study(project_root: Path, sample_root: Path, *, seed=123, steps=N
             "code_revision": revision,
             "dirty_working_tree": dirty,
             "code_provenance": describe_code(),
+            "geological_model_version_id": geological_model.interpretation.version_id,
+            "geological_model_sha256": geological_model.model_sha256,
             "coordinate_reference": "LOCAL_EAST_NORTH_FT; LOCAL_TVD positive down",
             "sensor_calibration": public["sensor_calibration"],
             "uncertainty_note": public["uncertainty_note"],

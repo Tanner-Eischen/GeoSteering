@@ -4,6 +4,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.model.schemas import PrejobModel
+from app.uncertainty.models import EnsembleSettings
+
 
 class SimulationConfig(BaseModel):
     model_config = ConfigDict(allow_inf_nan=False)
@@ -21,6 +24,8 @@ class SimulationConfig(BaseModel):
     scenario_version: str = "unspecified"
     seed: int = 123
     plan_id: str | None = None
+    geological_model: PrejobModel | None = None
+    ensemble_settings: EnsembleSettings | None = None
     guided: bool = True
     max_dls_deg_per_100ft: float = Field(default=3.0, gt=0)
     hidden_truth_path: str | None = None

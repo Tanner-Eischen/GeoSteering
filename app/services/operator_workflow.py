@@ -34,12 +34,14 @@ def load_operator_view(project_root, run_id):
         state = load_simulation_state(project_root, run_id)
         if config.run_id != run_id or state.run_id != run_id:
             raise ValueError("Saved configuration/state do not match the selected run")
+        from app.services.uncertainty import load_uncertainty_snapshot
         return {
             "config": config, "state": state,
             "interpretation": get_latest_interpretation(project_root, run_id),
             "frames": load_well_frames(project_root, config.active_well_id, run_id=run_id),
             "metrics": load_run_metrics(project_root, run_id),
             "scope": scope,
+            "uncertainty": load_uncertainty_snapshot(project_root, run_id),
         }
 
 

@@ -28,6 +28,19 @@ The target planner solves a constant-build eastward landing against the offset-d
 
 ## Runs and information boundaries
 
+Saved pre-job models embed the selected offset IDs, their observed input hashes,
+the active reference metadata, interpretation version and boundary coordinates.
+Planning selects a saved model instead of refitting all offsets. Plans and new
+runs embed the same content-hashed snapshot; incompatible evidence or changed
+source files block a new handoff until the operator reviews and saves a new
+model. Historical runs and forks retain the original model and input snapshots.
+
+Command previews use acquired trajectory stations and a content-checked public
+mechanics snapshot, never the private geological scenario or future sensor
+sampling. They reuse the same bounded minimum-curvature step as advancement,
+including shortened final intervals. A replay preview reports only its next
+reveal interval because recommendations do not change its recorded path.
+
 Each run owns its configuration, state, interpretations, decisions, metric snapshots and evaluation products under `runs/<run_id>/`. Reinitialization starts a new run. Existing historical records cannot be deleted or rewritten under an existing ID. Project creation and sample generation refuse populated output directories.
 
 Runs snapshot their input records and original formation picks. Regenerating an older report therefore preserves its original evidence even if current project markers are edited. A recoverable write journal rolls back an interrupted advance across history, metrics, environment and simulation state; a retry begins from the last committed step. Forking copies a saved acquired prefix into a new isolated run for alternative commands.
@@ -35,6 +48,28 @@ Runs snapshot their input records and original formation picks. Regenerating an 
 The operator data service clips active survey stations, logs, trajectory and markers at revealed MD, including inputs to range statistics, correlations and report plots. Offset observations remain available in full. Future active values and private truth are inaccessible through the ordinary operator loader. A replay endpoint between recorded survey stations does not fabricate an observed station using future survey data.
 
 Each advance records the recommendation and its supporting observations, creates the applicable interpretation version, and persists the resulting estimated-zone diagnostics. Historical metrics are never recomputed under the newest interpretation. Estimated metrics and withheld-truth outcome scores have distinct labels.
+
+Historical review at decision n uses observations through its `md_from_ft`, the
+interpretation recorded with that decision, and persisted metrics through n−1.
+After interval n, observations extend through `md_to_ft` and metric n becomes
+visible. Frozen input markers replace later project edits. Risk-note strings and
+nested newly sampled observations are excluded from decision-time presentation.
+Later interpretations never replace an earlier metric snapshot.
+
+Related-branch comparison verifies matching configuration, observed input/model
+fingerprints, recorded code identity, mechanical limits, captured field identity
+and the common fork prefix. Its endpoint is a station acquired by both branches;
+there is no interpolation using a more advanced branch's future station. Both
+branches must finish before explicit independent truth comparison, and the
+evaluator must return the same lateral denominator. Differences are right minus
+left; the denominator includes the shared prefix. Several commands or
+interpretation revisions may differ after the fork.
+
+The Evaluation page validates saved completed outcomes against the selected run
+before presenting them. Its DLS chart uses the same scenario bound as the
+independent scorer. A stricter causal command bound, if configured, is labeled
+separately. Placement excludes landing; interpretation mean absolute errors are
+averaged over acquired lateral stations, as in the original evaluator.
 
 ## Causal response and independent evaluation
 
@@ -45,6 +80,52 @@ The comparison policy estimates center and local trend from current and precedin
 Estimated-zone length metrics integrate the piecewise-linear trajectory and interpretation exactly in MD, including boundary crossings and partial final intervals. Mean center distance integrates absolute signed center error. The denominator excludes the build/landing interval. The final-point indicator is not a step-length fraction.
 
 The nonlinear truth field is evaluated only after completion, using a disclosed fine MD integration grid with crossing interpolation and refinement tests. Reports distinguish lateral DLS from the higher landing curvature. Interpretation residuals compare the offset baseline and final estimate with the same independent field; a failed or uncertain estimate is reported as such.
+
+## Optional spatial uncertainty ensemble
+
+The opt-in ensemble is a sequential particle model, separate from manual
+interpretation versions and their assumed uncertainty band. Its structure follows
+the importance-weighting/resampling framework described by
+[Doucet and Johansen](https://www.stats.ox.ac.uk/~doucet/doucet_johansen_tutorialPF2011.pdf).
+That methodological reference does not validate this application's geological
+process or sensor assumptions.
+
+The default model uses 256 members initialized at the acquired start position
+from the frozen offset centerline and thickness. Initial center and dip standard
+deviations are 10 ft and 0.006 ft/ft. Forward spatial substeps are at most 50 ft.
+Center and dip process standard deviations are 2 ft and 0.002 ft/ft per square
+root of a 50-ft advance, with dip bounded to ±0.15. A 10% relative lognormal
+thickness prior is represented by 64 fixed equal-probability quadrature nodes.
+It stays independent because the sensor likelihood identifies center, not
+thickness.
+
+The likelihood evaluates the public signed GR response in the forward direction,
+clips its latent mean to 20–160 API, and combines 0.6 API sensor noise with an
+assumed 4 API model discrepancy in quadrature. Saturation therefore does not
+become an exact center inversion. Effective model count is `1 / sum(weight²)`.
+Systematic resampling occurs before the next update when the previous ESS is
+below half the member count. Forecast-only replication prevents a concentrated
+posterior from erasing future process spread; it never changes saved weights.
+Current headline statistics use exact saved posterior weights, while forecast
+curves are Monte Carlo approximations on one shared 50-ft lattice.
+
+The acquired-data service locates at most one new GR sample per run step using
+only acquired survey brackets. It does not multiply likelihoods over every dense
+LAS sample. Missing data propagate without weighting; already processed or
+non-forward positions are not assimilated again. If a newer station has no new
+GR, prediction-only propagation uses that station's pose and never relabels an
+old reading. Initial snapshot zero already incorporates the located start GR
+when available. Settings, original baseline and per-step snapshots are hashed,
+immutable, transactionally recovered and copied with a fork. Decision review
+selects ensemble n−1 before decision n and ensemble n after its acquired interval.
+
+Conditional in-target probability marginalizes the center posterior and the
+independent thickness prior. Command alternatives share one forecast realization
+and bounded geometry. These are next-station probabilities under assumptions,
+not calibrated success probabilities. The separate `uncertainty_v1` protocol
+measures pre/post observation center coverage, width and valid-domain 250/500-ft
+forecasts, retaining the calibration-bias failure. No interval level or model
+setting was tuned to its evaluation outcomes.
 
 ## Reproducibility
 

@@ -1,0 +1,955 @@
+{
+  "case_results": [
+    {
+      "case_id": "dev_linear",
+      "description": "Mild linear dip without a structural change; nominal sensor.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 0.0,
+        "mean_collapse_step_count": 0.0,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 0.0,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 147.61850463732026,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 67.84380104652482,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 0.0,
+        "mean_resampling_count": 34.0,
+        "mean_saturated_measurement_count": 0.0
+      },
+      "geology": {
+        "disturbance_height_ft": 0.0,
+        "regional_dip": 0.003,
+        "thickness_ft": 24.0
+      },
+      "label": "Linear control",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 0.6027532724476501,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 17.810856701061297,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 182,
+          "trial_count": 2
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 1.0523342233890576,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 27.341461579810684,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 182,
+          "trial_count": 2
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 0.5973001026258254,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 17.786375070817574,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 192,
+          "trial_count": 2
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 1.0523342233890576,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 27.341461579810684,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 182,
+          "trial_count": 2
+        },
+        "posterior_current": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 0.24422351438912832,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 5.26006640095769,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 202,
+          "trial_count": 2
+        },
+        "prior_current": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 0.3075542025757564,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 8.994242820601432,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 202,
+          "trial_count": 2
+        }
+      },
+      "seed_count": 2,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "development"
+    },
+    {
+      "case_id": "dev_smooth",
+      "description": "A small gradual structural transition, with exact synthetic offset picks.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 0.0,
+        "mean_collapse_step_count": 0.0,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 0.0,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 146.18456621202384,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 67.84380104652467,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 0.0,
+        "mean_resampling_count": 34.0,
+        "mean_saturated_measurement_count": 0.0
+      },
+      "geology": {
+        "disturbance_height_ft": 8.0,
+        "disturbance_width_ft": 700.0,
+        "disturbance_x_ft": 2300.0,
+        "regional_dip": 0.002,
+        "thickness_ft": 28.0
+      },
+      "label": "Smooth control",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 1.0965360647968871,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 17.94584801723329,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 182,
+          "trial_count": 2
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 2.001874060903038,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 27.745036080258735,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 182,
+          "trial_count": 2
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 1.0715076527069816,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 17.949325771581336,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 192,
+          "trial_count": 2
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 2.001874060903038,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 27.745036080258735,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 182,
+          "trial_count": 2
+        },
+        "posterior_current": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 0.2624196326996696,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 5.290787749537778,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 202,
+          "trial_count": 2
+        },
+        "prior_current": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 0.4015106677952712,
+          "mean_coverage_pct": 100.0,
+          "mean_width_ft": 9.007777383456357,
+          "min_coverage_pct": 100.0,
+          "total_point_count": 202,
+          "trial_count": 2
+        }
+      },
+      "seed_count": 2,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "development"
+    },
+    {
+      "case_id": "eval_nominal",
+      "description": "New upward dip and moderate upward transition with nominal sensor calibration.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 0.0,
+        "mean_collapse_step_count": 0.0,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 10.0,
+        "mean_filter_saturation_low_count": 0.0,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 153.54182617077703,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 71.55867949063567,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 0.0,
+        "mean_resampling_count": 27.0,
+        "mean_saturated_measurement_count": 20.0
+      },
+      "geology": {
+        "disturbance_height_ft": -14.0,
+        "disturbance_width_ft": 600.0,
+        "disturbance_x_ft": 2500.0,
+        "regional_dip": -0.0065,
+        "thickness_ft": 22.0
+      },
+      "label": "Nominal reverse dip",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 2.9681668249234248,
+          "mean_coverage_pct": 99.34065934065934,
+          "mean_width_ft": 19.738389183576615,
+          "min_coverage_pct": 96.7032967032967,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 4.635085345804701,
+          "mean_coverage_pct": 98.68131868131869,
+          "mean_width_ft": 29.16241056025616,
+          "min_coverage_pct": 97.8021978021978,
+          "total_point_count": 455,
+          "trial_count": 5
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 3.5443804287842675,
+          "mean_coverage_pct": 99.375,
+          "mean_width_ft": 20.836276322923894,
+          "min_coverage_pct": 96.875,
+          "total_point_count": 480,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 4.635085345804701,
+          "mean_coverage_pct": 98.68131868131869,
+          "mean_width_ft": 29.16241056025616,
+          "min_coverage_pct": 97.8021978021978,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "posterior_current": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 2.5833884532837743,
+          "mean_coverage_pct": 97.82178217821783,
+          "mean_width_ft": 10.593998023748894,
+          "min_coverage_pct": 90.0990099009901,
+          "total_point_count": 505,
+          "trial_count": 5
+        },
+        "prior_current": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 2.7526138259866153,
+          "mean_coverage_pct": 99.009900990099,
+          "mean_width_ft": 13.500312489353206,
+          "min_coverage_pct": 95.04950495049505,
+          "total_point_count": 505,
+          "trial_count": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_noise",
+      "description": "Noise rises to 4 API while the ensemble retains its predeclared likelihood settings.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 0.0,
+        "mean_collapse_step_count": 0.0,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 27.6,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 166.9122653547418,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 47.87818322599691,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 5.0,
+        "mean_resampling_count": 22.4,
+        "mean_saturated_measurement_count": 56.0
+      },
+      "geology": {
+        "disturbance_height_ft": 20.0,
+        "disturbance_width_ft": 450.0,
+        "disturbance_x_ft": 3000.0,
+        "regional_dip": 0.0105,
+        "thickness_ft": 26.0
+      },
+      "label": "Higher measurement noise",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 93.4065934065934,
+          "mean_abs_center_error_ft": 4.4317290323681995,
+          "mean_coverage_pct": 91.42857142857143,
+          "mean_width_ft": 36.13884021416171,
+          "min_coverage_pct": 89.01098901098901,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 93.4065934065934,
+          "mean_abs_center_error_ft": 5.624500966701623,
+          "mean_coverage_pct": 91.86813186813187,
+          "mean_width_ft": 45.86597451041699,
+          "min_coverage_pct": 90.10989010989012,
+          "total_point_count": 455,
+          "trial_count": 5
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 93.75,
+          "mean_abs_center_error_ft": 4.890517245451535,
+          "mean_coverage_pct": 91.87500000000003,
+          "mean_width_ft": 39.53874378260268,
+          "min_coverage_pct": 89.58333333333334,
+          "total_point_count": 480,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 93.4065934065934,
+          "mean_abs_center_error_ft": 5.624500966701623,
+          "mean_coverage_pct": 91.86813186813187,
+          "mean_width_ft": 45.86597451041699,
+          "min_coverage_pct": 90.10989010989012,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "posterior_current": {
+          "max_coverage_pct": 95.04950495049505,
+          "mean_abs_center_error_ft": 4.28581330951293,
+          "mean_coverage_pct": 91.48514851485149,
+          "mean_width_ft": 32.163492131300565,
+          "min_coverage_pct": 89.10891089108911,
+          "total_point_count": 505,
+          "trial_count": 5
+        },
+        "prior_current": {
+          "max_coverage_pct": 95.04950495049505,
+          "mean_abs_center_error_ft": 4.363185719521408,
+          "mean_coverage_pct": 93.06930693069307,
+          "mean_width_ft": 34.10576160296711,
+          "min_coverage_pct": 91.0891089108911,
+          "total_point_count": 505,
+          "trial_count": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 4.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_bias",
+      "description": "An undisclosed +8 API sensor bias tests conditional calibration under model mismatch.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 0.0,
+        "mean_collapse_step_count": 0.0,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 0.0,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 145.49681652377478,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 63.020092403596166,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 0.0,
+        "mean_resampling_count": 37.0,
+        "mean_saturated_measurement_count": 0.0
+      },
+      "geology": {
+        "disturbance_height_ft": -16.0,
+        "disturbance_width_ft": 350.0,
+        "disturbance_x_ft": 2600.0,
+        "regional_dip": -0.003,
+        "thickness_ft": 18.0
+      },
+      "label": "Calibration bias",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 97.8021978021978,
+          "mean_abs_center_error_ft": 4.934391390725836,
+          "mean_coverage_pct": 96.70329670329669,
+          "mean_width_ft": 17.501152208215995,
+          "min_coverage_pct": 94.5054945054945,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 6.2369695110623695,
+          "mean_coverage_pct": 98.46153846153847,
+          "mean_width_ft": 26.552200610183775,
+          "min_coverage_pct": 96.7032967032967,
+          "total_point_count": 455,
+          "trial_count": 5
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 97.91666666666666,
+          "mean_abs_center_error_ft": 4.899927034131805,
+          "mean_coverage_pct": 96.875,
+          "mean_width_ft": 17.5147529732403,
+          "min_coverage_pct": 94.79166666666666,
+          "total_point_count": 480,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 100.0,
+          "mean_abs_center_error_ft": 6.2369695110623695,
+          "mean_coverage_pct": 98.46153846153847,
+          "mean_width_ft": 26.552200610183775,
+          "min_coverage_pct": 96.7032967032967,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "posterior_current": {
+          "max_coverage_pct": 3.9603960396039604,
+          "mean_abs_center_error_ft": 4.019909625782931,
+          "mean_coverage_pct": 3.1683168316831685,
+          "mean_width_ft": 5.275549163499127,
+          "min_coverage_pct": 2.9702970297029703,
+          "total_point_count": 505,
+          "trial_count": 5
+        },
+        "prior_current": {
+          "max_coverage_pct": 68.31683168316832,
+          "mean_abs_center_error_ft": 4.026504229094332,
+          "mean_coverage_pct": 62.77227722772277,
+          "mean_width_ft": 8.91867358820647,
+          "min_coverage_pct": 55.44554455445545,
+          "total_point_count": 505,
+          "trial_count": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 8.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_missing",
+      "description": "40% missing GR values; missing steps propagate without a likelihood update.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 0.4,
+        "mean_collapse_step_count": 0.4,
+        "mean_dropped_measurement_count": 40.4,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 15.6,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 179.44340552640355,
+        "mean_measurement_used_count": 60.6,
+        "mean_minimum_ess": 10.564788854424084,
+        "mean_missing_measurement_count": 40.4,
+        "mean_predictive_conflict_count": 1.2,
+        "mean_resampling_count": 14.2,
+        "mean_saturated_measurement_count": 55.0
+      },
+      "geology": {
+        "disturbance_height_ft": 22.0,
+        "disturbance_width_ft": 220.0,
+        "disturbance_x_ft": 3100.0,
+        "regional_dip": 0.0065,
+        "thickness_ft": 20.0
+      },
+      "label": "Missing measurements",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 93.4065934065934,
+          "mean_abs_center_error_ft": 8.610286274810338,
+          "mean_coverage_pct": 90.76923076923076,
+          "mean_width_ft": 33.203457001023956,
+          "min_coverage_pct": 86.81318681318682,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 91.20879120879121,
+          "mean_abs_center_error_ft": 11.454455613169344,
+          "mean_coverage_pct": 87.03296703296704,
+          "mean_width_ft": 42.20324666702581,
+          "min_coverage_pct": 81.31868131868131,
+          "total_point_count": 455,
+          "trial_count": 5
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 93.75,
+          "mean_abs_center_error_ft": 9.971317599745074,
+          "mean_coverage_pct": 90.83333333333334,
+          "mean_width_ft": 36.21168685642782,
+          "min_coverage_pct": 86.45833333333334,
+          "total_point_count": 480,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 91.20879120879121,
+          "mean_abs_center_error_ft": 11.454455613169344,
+          "mean_coverage_pct": 87.03296703296704,
+          "mean_width_ft": 42.20324666702581,
+          "min_coverage_pct": 81.31868131868131,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "posterior_current": {
+          "max_coverage_pct": 97.02970297029702,
+          "mean_abs_center_error_ft": 8.670049897517085,
+          "mean_coverage_pct": 93.26732673267327,
+          "mean_width_ft": 29.19438642284648,
+          "min_coverage_pct": 88.11881188118812,
+          "total_point_count": 505,
+          "trial_count": 5
+        },
+        "prior_current": {
+          "max_coverage_pct": 96.03960396039604,
+          "mean_abs_center_error_ft": 8.833185030155724,
+          "mean_coverage_pct": 92.87128712871285,
+          "mean_width_ft": 30.97324399614907,
+          "min_coverage_pct": 88.11881188118812,
+          "total_point_count": 505,
+          "trial_count": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.4,
+        "noise_std_api": 0.6
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_thin_abrupt",
+      "description": "A 34-ft change over 90 ft challenges local smoothness assumptions; only center intervals are scored.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 1.0,
+        "mean_collapse_step_count": 2.6,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 30.2,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 163.5293756897497,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 1.1915831778436183,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 3.6,
+        "mean_resampling_count": 17.6,
+        "mean_saturated_measurement_count": 64.0
+      },
+      "geology": {
+        "disturbance_height_ft": 34.0,
+        "disturbance_width_ft": 90.0,
+        "disturbance_x_ft": 2700.0,
+        "regional_dip": 0.0015,
+        "thickness_ft": 7.0
+      },
+      "label": "Thin / abrupt change",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 91.20879120879121,
+          "mean_abs_center_error_ft": 11.876552559631815,
+          "mean_coverage_pct": 76.26373626373626,
+          "mean_width_ft": 31.86571571972782,
+          "min_coverage_pct": 54.94505494505495,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 86.81318681318682,
+          "mean_abs_center_error_ft": 15.476903176193158,
+          "mean_coverage_pct": 69.67032967032966,
+          "mean_width_ft": 40.37252834082106,
+          "min_coverage_pct": 43.956043956043956,
+          "total_point_count": 455,
+          "trial_count": 5
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 90.625,
+          "mean_abs_center_error_ft": 13.233784443544902,
+          "mean_coverage_pct": 75.0,
+          "mean_width_ft": 34.63484072721202,
+          "min_coverage_pct": 52.083333333333336,
+          "total_point_count": 480,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 86.81318681318682,
+          "mean_abs_center_error_ft": 15.476903176193158,
+          "mean_coverage_pct": 69.67032967032966,
+          "mean_width_ft": 40.37252834082106,
+          "min_coverage_pct": 43.956043956043956,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "posterior_current": {
+          "max_coverage_pct": 93.06930693069307,
+          "mean_abs_center_error_ft": 11.2427589921867,
+          "mean_coverage_pct": 76.63366336633665,
+          "mean_width_ft": 27.62186645822274,
+          "min_coverage_pct": 52.475247524752476,
+          "total_point_count": 505,
+          "trial_count": 5
+        },
+        "prior_current": {
+          "max_coverage_pct": 93.06930693069307,
+          "mean_abs_center_error_ft": 11.509281975555142,
+          "mean_coverage_pct": 76.63366336633665,
+          "mean_width_ft": 29.540652340151876,
+          "min_coverage_pct": 52.475247524752476,
+          "total_point_count": 505,
+          "trial_count": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 1.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_saturation",
+      "description": "A large, abrupt structural change pushes fixed-HOLD observations into the known GR clipping regime.",
+      "diagnostics": {
+        "mean_collapse_episode_count": 1.0,
+        "mean_collapse_step_count": 2.2,
+        "mean_dropped_measurement_count": 0.0,
+        "mean_event_count": 101.0,
+        "mean_filter_saturation_high_count": 0.0,
+        "mean_filter_saturation_low_count": 33.8,
+        "mean_forecast_exclusion_count": 15.0,
+        "mean_mean_ess": 160.87804883505422,
+        "mean_measurement_used_count": 101.0,
+        "mean_minimum_ess": 1.622518262263661,
+        "mean_missing_measurement_count": 0.0,
+        "mean_predictive_conflict_count": 3.4,
+        "mean_resampling_count": 15.8,
+        "mean_saturated_measurement_count": 70.0
+      },
+      "geology": {
+        "disturbance_height_ft": 70.0,
+        "disturbance_width_ft": 130.0,
+        "disturbance_x_ft": 2450.0,
+        "regional_dip": 0.0045,
+        "thickness_ft": 12.0
+      },
+      "label": "Large change / saturation",
+      "paired_forecasts": {
+        "forecast_250": {
+          "max_coverage_pct": 70.32967032967034,
+          "mean_abs_center_error_ft": 23.726207056836287,
+          "mean_coverage_pct": 58.24175824175825,
+          "mean_width_ft": 38.75256827370919,
+          "min_coverage_pct": 43.956043956043956,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 70.32967032967034,
+          "mean_abs_center_error_ft": 26.52473035416486,
+          "mean_coverage_pct": 58.02197802197802,
+          "mean_width_ft": 47.39204818344267,
+          "min_coverage_pct": 42.857142857142854,
+          "total_point_count": 455,
+          "trial_count": 5
+        }
+      },
+      "phases": {
+        "forecast_250": {
+          "max_coverage_pct": 71.875,
+          "mean_abs_center_error_ft": 23.450217723997746,
+          "mean_coverage_pct": 60.416666666666664,
+          "mean_width_ft": 41.99815853292399,
+          "min_coverage_pct": 46.875,
+          "total_point_count": 480,
+          "trial_count": 5
+        },
+        "forecast_500": {
+          "max_coverage_pct": 70.32967032967034,
+          "mean_abs_center_error_ft": 26.52473035416486,
+          "mean_coverage_pct": 58.02197802197802,
+          "mean_width_ft": 47.39204818344267,
+          "min_coverage_pct": 42.857142857142854,
+          "total_point_count": 455,
+          "trial_count": 5
+        },
+        "posterior_current": {
+          "max_coverage_pct": 74.25742574257426,
+          "mean_abs_center_error_ft": 20.72722619309226,
+          "mean_coverage_pct": 62.97029702970296,
+          "mean_width_ft": 35.30637099245691,
+          "min_coverage_pct": 50.495049504950494,
+          "total_point_count": 505,
+          "trial_count": 5
+        },
+        "prior_current": {
+          "max_coverage_pct": 74.25742574257426,
+          "mean_abs_center_error_ft": 21.016057119353125,
+          "mean_coverage_pct": 62.97029702970296,
+          "mean_width_ft": 36.99445128579292,
+          "min_coverage_pct": 50.495049504950494,
+          "total_point_count": 505,
+          "trial_count": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "evaluation"
+    }
+  ],
+  "counts": {
+    "development_cases": 2,
+    "evaluation_cases": 6,
+    "trial_count": 34
+  },
+  "development": {
+    "diagnostics": {
+      "mean_collapse_episode_count": 0.0,
+      "mean_collapse_step_count": 0.0,
+      "mean_dropped_measurement_count": 0.0,
+      "mean_event_count": 101.0,
+      "mean_filter_saturation_high_count": 0.0,
+      "mean_filter_saturation_low_count": 0.0,
+      "mean_forecast_exclusion_count": 15.0,
+      "mean_mean_ess": 146.90153542467203,
+      "mean_measurement_used_count": 101.0,
+      "mean_minimum_ess": 67.84380104652475,
+      "mean_missing_measurement_count": 0.0,
+      "mean_predictive_conflict_count": 0.0,
+      "mean_resampling_count": 34.0,
+      "mean_saturated_measurement_count": 0.0
+    },
+    "phases": {
+      "forecast_250": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 0.8344038776664036,
+        "mean_coverage_pct": 100.0,
+        "mean_width_ft": 17.867850421199456,
+        "min_coverage_pct": 100.0,
+        "total_point_count": 384
+      },
+      "forecast_500": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 1.5271041421460478,
+        "mean_coverage_pct": 100.0,
+        "mean_width_ft": 27.54324883003471,
+        "min_coverage_pct": 100.0,
+        "total_point_count": 364
+      },
+      "posterior_current": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 0.253321573544399,
+        "mean_coverage_pct": 100.0,
+        "mean_width_ft": 5.275427075247734,
+        "min_coverage_pct": 100.0,
+        "total_point_count": 404
+      },
+      "prior_current": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 0.3545324351855138,
+        "mean_coverage_pct": 100.0,
+        "mean_width_ft": 9.001010102028895,
+        "min_coverage_pct": 100.0,
+        "total_point_count": 404
+      }
+    }
+  },
+  "engine_version": "signed-gr-particle-ensemble-v1",
+  "evaluation": {
+    "diagnostics": {
+      "mean_collapse_episode_count": 0.39999999999999997,
+      "mean_collapse_step_count": 0.8666666666666667,
+      "mean_dropped_measurement_count": 6.733333333333333,
+      "mean_event_count": 101.0,
+      "mean_filter_saturation_high_count": 1.6666666666666667,
+      "mean_filter_saturation_low_count": 17.866666666666667,
+      "mean_forecast_exclusion_count": 15.0,
+      "mean_mean_ess": 161.6336230167502,
+      "mean_measurement_used_count": 94.26666666666667,
+      "mean_minimum_ess": 32.639307569126686,
+      "mean_missing_measurement_count": 6.733333333333333,
+      "mean_predictive_conflict_count": 2.2,
+      "mean_resampling_count": 22.33333333333334,
+      "mean_saturated_measurement_count": 44.166666666666664
+    },
+    "phases": {
+      "forecast_250": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 9.998357412609222,
+        "mean_coverage_pct": 85.72916666666667,
+        "mean_width_ft": 31.789076532555114,
+        "min_coverage_pct": 46.875,
+        "total_point_count": 2880
+      },
+      "forecast_500": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 11.658774161182677,
+        "mean_coverage_pct": 83.95604395604397,
+        "mean_width_ft": 38.591401478691076,
+        "min_coverage_pct": 42.857142857142854,
+        "total_point_count": 2730
+      },
+      "posterior_current": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 8.588191078562614,
+        "mean_coverage_pct": 70.89108910891089,
+        "mean_width_ft": 23.35927719867912,
+        "min_coverage_pct": 2.9702970297029703,
+        "total_point_count": 3030
+      },
+      "prior_current": {
+        "max_coverage_pct": 100.0,
+        "mean_abs_center_error_ft": 8.750137983277725,
+        "mean_coverage_pct": 81.22112211221122,
+        "mean_width_ft": 25.672182550436776,
+        "min_coverage_pct": 50.495049504950494,
+        "total_point_count": 3030
+      }
+    }
+  },
+  "interpretation_notes": [
+    "This fixed-HOLD study assesses center-interval quality, not steering-policy performance or operational safety.",
+    "Nominal 90% intervals are conditional on the fixed particle model and signed-GR calibration; empirical coverage can differ substantially.",
+    "Cases are handpicked, with development and evaluation geology and seeds kept distinct. Equal-case summaries are descriptive, not population confidence statements.",
+    "Current prior and posterior intervals use the same truth locations. Each forecast horizon excludes targets beyond the evaluated x domain; paired-origin results use only origins valid for both horizons.",
+    "Coverage and width are computed within each trial before equal-trial and equal-case averaging. Correlated MD points are not independent inferential samples.",
+    "Missing GR propagates without weighting. Available clipped GR uses the model's clipped forward likelihood, rather than exact center inversion.",
+    "Exact synthetic offset picks and known sensor assumptions remain strong simplifications. Center coverage does not validate thickness or top/base uncertainty.",
+    "The evaluated cases are now observed; future changes need new held-out cases. Repeating this protocol checks reproducibility, not independent confirmation."
+  ],
+  "manifest_sha256": "2ae18d4b0524e3e8421ad16c966abee65b757c3640b4a12e65ba9a7f0e203a36",
+  "nominal_level": 0.9,
+  "phases": {
+    "forecast_250": "250-ft forecast",
+    "forecast_500": "500-ft forecast",
+    "posterior_current": "Current posterior",
+    "prior_current": "Current pre-observation prior"
+  },
+  "schema_version": 1,
+  "settings": {
+    "center_process_std_ft": 2.0,
+    "dip_bound": 0.15,
+    "dip_process_std": 0.002,
+    "forecast_grid_step_ft": 50.0,
+    "member_count": 256,
+    "model_discrepancy_std_api": 4.0,
+    "prior_center_std_ft": 10.0,
+    "prior_dip_std": 0.006,
+    "prior_thickness_relative_std": 0.1,
+    "process_reference_step_ft": 50.0,
+    "resample_ess_fraction": 0.5,
+    "sensor_center_api": 80.0,
+    "sensor_clip_max_api": 160.0,
+    "sensor_clip_min_api": 20.0,
+    "sensor_gradient_api_per_ft": 2.0,
+    "sensor_noise_std_api": 0.6,
+    "version": "spatial-particle-v1"
+  },
+  "source_fingerprint": "1596e93223018fdacd4fe99ffb55102e4e49d2ee55f4d413870ce2b82775cb4e",
+  "study_id": "uncertainty-calibration-v1",
+  "worst_trial": {
+    "case_id": "eval_bias",
+    "coverage_pct": 2.9702970297029703,
+    "covered_count": 3,
+    "diagnostics": {
+      "collapse_episode_count": 0,
+      "collapse_step_count": 0,
+      "dropped_measurement_count": 0,
+      "event_count": 101,
+      "filter_saturation_high_count": 0,
+      "filter_saturation_low_count": 0,
+      "forecast_exclusion_count": 15,
+      "mean_ess": 145.42944937990922,
+      "measurement_used_count": 101,
+      "minimum_ess": 59.06704814883639,
+      "missing_measurement_count": 0,
+      "predictive_conflict_count": 0,
+      "resampling_count": 37,
+      "saturated_measurement_count": 0,
+      "skip_reasons": {}
+    },
+    "mean_abs_center_error_ft": 3.990906538939685,
+    "mean_width_ft": 5.2998613181266165,
+    "phase": "posterior_current",
+    "point_count": 101,
+    "seed": 7001
+  }
+}

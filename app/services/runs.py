@@ -51,6 +51,26 @@ def initialize_run(
     root = Path(project_root)
     if not (root / "project.json").exists():
         raise ValueError("Create a project before initializing a replay")
+    if config.ensemble_settings is not None and config.scenario_version != "structural_dip_01-v1":
+        raise ValueError("The ensemble requires the disclosed structural_dip_01 synthetic GR calibration")
+    # New handoffs use one frozen model across every stage; older programmatic
+    # callers without a bound model retain their explicit control-point API.
+    model = config.geological_model
+    if config.plan_id:
+        from app.plan.plan_store import load_plan
+        plan, _ = load_plan(root, config.plan_id)
+        if plan.geological_model is not None:
+            if model is not None and model.model_sha256 != plan.geological_model.model_sha256:
+                raise ValueError("Selected plan and run use different geological interpretations")
+            model = plan.geological_model
+    if model is not None:
+        from app.services.prejob import validate_prejob_model
+        validate_prejob_model(root, model, active_well_id=config.active_well_id, offset_well_ids=config.offset_well_ids)
+        if list(top_control_points) != model.interpretation.top_control_points or list(base_control_points) != model.interpretation.base_control_points:
+            raise ValueError("Run boundaries must match the selected geological interpretation")
+        if uncertainty_band_tvd_ft != model.interpretation.uncertainty.band_tvd_ft:
+            raise ValueError("Run uncertainty must match the selected geological interpretation")
+        config = config.model_copy(update={"geological_model": model}, deep=True)
     _, wells = load_project_and_wells(root)
     by_id = {well.well_id: well for well in wells}
     selected_ids = [config.active_well_id, *config.offset_well_ids]
@@ -86,6 +106,8 @@ def initialize_run(
         raise ValueError("A causal run requires captured truth or explicit selection of the bundled synthetic environment")
     scope.mkdir(parents=True, exist_ok=False)
     snapshot_run_inputs(root, scope, [config.active_well_id, *config.offset_well_ids])
+    if model is not None:
+        atomic_write_json(scope / "inputs" / "geological_model.json", model.model_dump(mode="json"))
     # Populate the isolated scope before publishing it as the active run.
     if config.mode == "causal":
         from app.sim.environment import initialize_environment
@@ -108,6 +130,10 @@ def initialize_run(
     state.version_id_by_step = [baseline.version_id]
     state.decision_id_by_step = [None]
     save_simulation_state(scope, state)
+    if run_config.ensemble_settings is not None:
+        from app.services.uncertainty import initialize_uncertainty
+        acquired_frames = load_well_frames(root, config.active_well_id, run_id=run_id)
+        initialize_uncertainty(root, run_config, state, baseline, acquired_frames)
     atomic_write_json(scope / "manifest.json", describe_run_inputs(scope, run_config))
     atomic_write_json(root / "active_run.json", {"run_id": run_id})
     return state
@@ -225,5 +251,8 @@ def advance_run(
     if acquired is not None:
         from app.sim.environment import commit_environment_step
         commit_environment_step(run_root(project_root), acquired, response)
+    if config.ensemble_settings is not None:
+        from app.services.uncertainty import advance_uncertainty
+        advance_uncertainty(project_root, config, next_state, acquired if acquired is not None else raw)
     save_simulation_state(project_root, next_state)
     return next_state

@@ -7,13 +7,8 @@ import pandas as pd
 import streamlit as st
 
 from app.plot.correlation_panel import CURVE_COLORS, build_correlation_figure
-from app.services.baseline import estimate_offset_baseline
-from app.services.interpretations import (
-    create_baseline_interpretation,
-    create_interpretation_version,
-    get_latest_interpretation,
-)
 from app.services.markers import add_marker, delete_marker, edit_marker, load_markers
+from app.services.prejob import list_prejob_models, model_label, save_prejob_model
 from app.services.project_data import load_project_and_wells, load_well_frames
 from app.ui.theme import render_page_header
 
@@ -155,17 +150,21 @@ def render(project_root: str | None) -> None:
     selected_offset_ids = [well_by_name[name].well_id for name in selected_wells if well_by_name[name].well_id != project.active_well_id]
     if st.button("Save pre-job interpretation from selected offset picks"):
         try:
-            top, base, uncertainty = estimate_offset_baseline(root, selected_offset_ids)
-            prejob = root / "prejob"
-            if get_latest_interpretation(prejob) is None:
-                create_baseline_interpretation(prejob, top, base, uncertainty_band_tvd_ft=uncertainty,
-                                              rationale="Regional top/base fitted to selected offset marker intersections only")
-            else:
-                create_interpretation_version(prejob, 0, "Revised regional fit to selected offset picks", top, base, uncertainty)
+            model = save_prejob_model(root, selected_offset_ids)
         except (ValueError, KeyError) as exc:
             st.error(str(exc))
         else:
-            st.success(f"Saved offset-derived regional model. ±{uncertainty:g} ft assumed uncertainty; spatial support is limited to the offset marker locations.")
+            st.session_state["planning_selected_model"] = model.interpretation.version_id
+            st.success(f"Saved interpretation {model.interpretation.version_id[:8]} from {len(selected_offset_ids)} selected offsets. The same model can now be used in Planning and Steering.")
+    models = list_prejob_models(root)
+    if models:
+        with st.expander("Saved interpretations and evidence", expanded=False):
+            for saved_model in models:
+                st.write(model_label(saved_model))
+                st.caption(f"Model hash {saved_model.model_sha256[:12]} · ±{saved_model.interpretation.uncertainty.band_tvd_ft:g} ft assumed range")
+        if st.button("Continue to Planning"):
+            st.session_state["nav_target"] = "Planning"
+            st.rerun()
 
     md_min_all, md_max_all = _selected_depth_window(logs_by_well)
     if "corr_depth_min" not in st.session_state:

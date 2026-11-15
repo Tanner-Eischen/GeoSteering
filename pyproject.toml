@@ -53,6 +53,12 @@ include-package-data = true
 where = ["."]
 include = ["app*", "tools*"]
 
+[tool.setuptools.data-files]
+"share/geosteering/case_studies/uncertainty_v1" = ["case_studies/uncertainty_v1/*.json", "case_studies/uncertainty_v1/*.md"]
+"share/geosteering/case_studies/uncertainty_v1/results" = ["case_studies/uncertainty_v1/results/*.json", "case_studies/uncertainty_v1/results/*.csv", "case_studies/uncertainty_v1/results/*.png", "case_studies/uncertainty_v1/results/*.gz", "case_studies/uncertainty_v1/results/*.zip", "case_studies/uncertainty_v1/results/*.md"]
+"share/geosteering/case_studies/robustness_v1" = ["case_studies/robustness_v1/*.json", "case_studies/robustness_v1/*.md"]
+"share/geosteering/case_studies/robustness_v1/results" = ["case_studies/robustness_v1/results/*.json", "case_studies/robustness_v1/results/*.csv", "case_studies/robustness_v1/results/*.png", "case_studies/robustness_v1/results/*.gz", "case_studies/robustness_v1/results/*.zip", "case_studies/robustness_v1/results/*.md"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
@@ -61,6 +67,7 @@ addopts = "-q"
 [tool.ruff]
 target-version = "py311"
 line-length = 120
+extend-exclude = ["case_studies/*/results/frozen_source"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I"]

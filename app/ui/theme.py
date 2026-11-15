@@ -58,11 +58,10 @@ html, body, [class*="stApp"] {
     radial-gradient(1200px 600px at 95% -5%, #d8edf5 0%, rgba(216, 237, 245, 0) 60%),
     radial-gradient(900px 500px at -10% 105%, #f9e9d6 0%, rgba(249, 233, 214, 0) 55%),
     linear-gradient(180deg, #f6fbfd 0%, #eef5f8 100%);
-  padding-top: var(--gs-header-offset);
 }
 
 .block-container {
-  padding-top: 0;
+  padding-top: calc(var(--gs-header-offset) + 1rem);
   padding-bottom: 2rem;
 }
 
@@ -95,12 +94,29 @@ section[data-testid="stSidebar"] {
   border-right: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-section[data-testid="stSidebar"] * {
+section[data-testid="stSidebar"] :is(h1, h2, h3, label, p, summary) {
   color: #eef7fb !important;
 }
 
 section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
   color: #deecf3 !important;
+}
+
+section[data-testid="stSidebar"] :is(input, textarea) {
+  color: var(--gs-ink) !important;
+}
+
+section[data-testid="stSidebar"] [data-testid="stRadio"] label {
+  padding: 0.3rem 0;
+}
+
+section[data-testid="stSidebar"] [data-testid="stAlert"] p {
+  color: var(--gs-ink) !important;
+}
+
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 3px solid #d97706 !important;
+  outline-offset: 3px;
 }
 
 h1, h2, h3 {
@@ -187,6 +203,19 @@ code, pre, kbd {
 @media (max-width: 900px) {
   .gs-hero { padding: 0.9rem 0.9rem; }
   .gs-hero-title { font-size: 1.15rem; }
+}
+
+@media (min-width: 641px) and (max-width: 1100px) {
+  [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; }
+  [data-testid="stColumn"] {
+    flex: 1 1 230px !important;
+    min-width: min(230px, 100%) !important;
+    width: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gs-hero { animation: none; }
 }
 </style>
         """,

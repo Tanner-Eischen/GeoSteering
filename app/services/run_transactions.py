@@ -26,6 +26,7 @@ _DOCUMENTS = (
     "environment/state.json",
     "simulations/simulation_state.json",
     "step_requests.json",
+    "uncertainty/state.json",
 )
 _ACTIVE: set[str] = set()
 _LOCKS: dict[str, threading.RLock] = {}
@@ -38,7 +39,7 @@ def run_access_lock(scope):
 
 def _restore(scope: Path, files: dict) -> None:
     for relative, encoded in files.items():
-        if relative not in _DOCUMENTS:
+        if relative not in _DOCUMENTS and re.fullmatch(r"uncertainty/steps/[0-9]{8}\.json", relative) is None:
             raise ValueError("Invalid transaction checkpoint path")
         target = scope / relative
         if encoded is None:
@@ -117,10 +118,18 @@ def atomic_run_step(function):
                             request_id if guarded else None, expected, payload_hash)
 
     def transact(project_root, scope, args, kwargs, receipt_path, receipts, request_id, expected, payload_hash):
+        documents = list(_DOCUMENTS)
+        config = read_json(scope / "simulations" / "simulation_config.json", default={})
+        if config.get("ensemble_settings") is not None:
+            state = read_json(scope / "simulations" / "simulation_state.json")
+            next_step = state["step_index"] + 1
+            if type(next_step) is not int or not 0 <= next_step <= 99999999:
+                raise ValueError("Ensemble snapshot step exceeds the supported range")
+            documents.append(f"uncertainty/steps/{next_step:08d}.json")
         files = {
             relative: base64.b64encode((scope / relative).read_bytes()).decode("ascii")
             if (scope / relative).exists() else None
-            for relative in _DOCUMENTS
+            for relative in documents
         }
         journal = scope / "pending_step.json"
         atomic_write_json(journal, {"status": "pending", "files": files})

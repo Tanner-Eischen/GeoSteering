@@ -52,6 +52,55 @@ streamlit run app.py
 
 Use Dashboard's case-study loader to start a guided replay at landing. You can also start a **new isolated run** in Interpretation and Steering. Earlier runs and their histories remain available for export.
 
+In Correlation, save an interpretation from the offset wells you selected. In
+Planning, choose that saved version; its evidence and model are pinned into the
+plan and the next run. Causal steering previews show requested/effective
+inclination, next-station geometry, DLS and clipping before advancement. The
+preview uses acquired positions and public mechanics without revealing future
+measurements or true geology.
+
+Use **Decision Review** to revisit a saved step. **At decision** stops at the
+observations known before the next interval and shows the last metric available
+then; **After interval** adds the acquired observations and its original metric.
+The selected interpretation, prior version, rationale and boundary changes stay
+attached to that decision.
+
+Fork an unfinished causal run, record alternative commands, then open **Run
+Comparison**. Related branches share one experiment and are clipped to the same
+acquired station. Independent scores unlock only after both branches finish.
+The **Evaluation** page presents true placement, interpretation errors, lateral
+DLS and downloads for the selected completed run, with links back to decisions
+and report export.
+
+For the known synthetic GR model, enable **uncertainty ensemble** when creating
+a new isolated run. **Uncertainty** shows saved weighted intervals, effective
+model count, and conditional next-command probabilities. Each snapshot uses only
+acquired measurements and survives retries, forks and historical review. This
+model is separate from the original manually interpreted boundaries and assumed
+uncertainty band.
+
+The separate [34-trial uncertainty study](case_studies/uncertainty_v1/README.md)
+measures coverage and width without retuning the model. Nominal 90% center
+intervals achieved 70.89% posterior coverage across the evaluation cases; a
+biased-sensor trial covered just 3/101 stations despite healthy particle
+diagnostics. Inspect **Calibration evidence** before interpreting probabilities
+as reliable confidence.
+
+```powershell
+python -m tools.run_uncertainty_study --out output/uncertainty-study
+```
+
+Open **Robustness Study** for the separate frozen 132-trial benchmark: eight
+held-out evaluation configurations compare HOLD, an offset-derived plan and
+guided steering under changed geology and imperfect sensors. Mean evaluation
+placement is 28.34%, 39.29% and 85.83%, respectively; the worst guided trial is
+37.31%. These descriptive synthetic results include failure cases and do not
+establish field performance. See the [protocol and complete results](case_studies/robustness_v1/README.md).
+
+```powershell
+python -m tools.run_robustness_study --out output/robustness-study
+```
+
 Follow the workflow: scenario/data provenance, Data QC, Correlation Panel and offset picks, Planning, Interpretation and Steering, then Report Export. Reports and other operator views respect the selected run's revealed depth. Geological truth is shown only after completion.
 
 For individual imports, each well folder contains `survey.csv`, `logs.las`, optional `markers.csv`, and an explicit `reference.json` for spatial interpretation. See [methods](docs/methods.md) for the coordinate contract and survey tie-ins. Existing MD-only projects remain readable; new spatial studies require explicit references and offset-derived models.

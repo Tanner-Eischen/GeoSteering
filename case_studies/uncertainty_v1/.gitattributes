@@ -1,0 +1,2 @@
+# Preserve exact evidence and archived executable-source bytes across checkouts.
+results/** -text whitespace=trailing-space,space-before-tab,cr-at-eol,-blank-at-eof

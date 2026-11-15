@@ -20,6 +20,12 @@ def render(project_root: str | None) -> None:
     st.markdown("#### Geosteering under structural uncertainty")
     st.write("Three offsets constrain an initial regional model. Reveal active-well data, revise the interpretation, and evaluate against withheld geology after completion.")
     st.caption("Workflow: Scenario → QC → Correlation → Planning → Interpretation/steering → Evaluation → Report")
+    with st.container(border=True):
+        st.markdown("**Beyond the reference result**")
+        st.write("Explore paired HOLD, regional-plan and guided strategies across held-out geology and imperfect sensors, including the cases where guidance fails.")
+        if st.button("Explore Robustness Study"):
+            st.session_state["nav_target"] = "Robustness Study"
+            st.rerun()
     if st.button("Load Case Study in a new workspace"):
         from tools.bootstrap_demo_project import bootstrap_demo_project
         workspace = Path("data") / "case_studies" / str(uuid4())
@@ -85,3 +91,11 @@ def render(project_root: str | None) -> None:
     if c8.button("Go to Steering"):
         st.session_state["nav_target"] = "Steering Console"
         st.rerun()
+
+    st.markdown("#### Review the evidence")
+    st.caption("Inspect a recorded decision, compare branches from a common prefix, or evaluate a completed run.")
+    for column, label, page in zip(st.columns(3), ("Decision Review", "Run Comparison", "Evaluation"),
+                                    ("Decision Review", "Run Comparison", "Evaluation")):
+        if column.button(label, use_container_width=True):
+            st.session_state["nav_target"] = page
+            st.rerun()

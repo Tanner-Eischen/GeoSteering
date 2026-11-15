@@ -35,7 +35,15 @@ def generate_plan_stations(parameters: PlanParameters) -> pd.DataFrame:
             raise ValueError("Build-rate hint conflicts with specified kickoff and landing MD.")
 
     total_md = parameters.landing_md_ft + parameters.lateral_length_ft
-    md = np.unique(np.append(_md_grid(total_md, parameters.step_ft), [parameters.kickoff_md_ft, parameters.landing_md_ft]))
+    # Solved landings can differ from a regular station by a few floating-point
+    # ulps. Keep exact phase boundaries and remove coincident regular stations;
+    # a near-zero MD interval otherwise amplifies roundoff into a false DLS.
+    grid = _md_grid(total_md, parameters.step_ft)
+    boundaries = np.unique([0.0, parameters.kickoff_md_ft, parameters.landing_md_ft, total_md])
+    keep = np.ones(len(grid), dtype=bool)
+    for boundary in boundaries:
+        keep &= ~np.isclose(grid, boundary, atol=1e-7, rtol=0)
+    md = np.sort(np.concatenate([grid[keep], boundaries]))
 
     inc = np.zeros_like(md)
     build_mask = (md >= parameters.kickoff_md_ft) & (md <= parameters.landing_md_ft)

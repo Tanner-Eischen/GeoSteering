@@ -3,3 +3,5 @@ include app/_release_source.json
 include requirements-release-*.lock requirements-release-pins.txt
 recursive-include docs *.md *.png
 recursive-include case_studies *.json *.md
+recursive-include case_studies/robustness_v1 *.csv *.png *.gz *.zip *.py *.toml *.txt
+recursive-include case_studies/uncertainty_v1 *.csv *.png *.gz *.zip *.py *.toml *.txt

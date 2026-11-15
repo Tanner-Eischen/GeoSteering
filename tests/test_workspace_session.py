@@ -8,6 +8,8 @@ def test_switching_projects_discards_derived_controls_and_preview(tmp_path):
         "project_root": str(tmp_path / "first"), "planning_preview_stations": "old stations",
         "planning_preview_root": str(tmp_path / "first"), "corr_depth_max": 1800,
         "report_target": {"run_id": "old"}, "steering_run_old": "old",
+        "decision_review_step_old": 12, "comparison_left_old": "old", "evaluation_run_old": "old",
+        "review_run_old": "old", "run_compare_left_old": "old",
         "import_well_folder": "old import", "sidebar_page": "Planning",
     }
     activate_project(session, tmp_path / "second")

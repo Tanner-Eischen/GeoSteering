@@ -1,0 +1,755 @@
+{
+  "case_results": [
+    {
+      "case_id": "dev_reference",
+      "description": "Original geometry and sensor; software and reference control only.",
+      "geology": {},
+      "label": "Reference",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 58.968813798913175,
+          "mean": 58.928021839788066,
+          "min": 58.88722988066296,
+          "ties": 0,
+          "wins": 2
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 57.217126993530606,
+          "mean": 57.1763350344055,
+          "min": 57.13554307528039,
+          "ties": 0,
+          "wins": 2
+        }
+      },
+      "seed_count": 2,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "development",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 97.04043459551023,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 3.1697792339892885,
+          "mean_percent_in_zone": 96.99964263638512,
+          "mean_total_inc_change_deg": 27.0855928155215,
+          "min_percent_in_zone": 96.95885067726002
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 38.07162079659706,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 38.000000000000455,
+          "mean_percent_in_zone": 38.07162079659706,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 38.07162079659706
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 39.82330760197963,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 13.051762490345027,
+          "mean_percent_in_zone": 39.82330760197963,
+          "mean_total_inc_change_deg": 0.7231420399134549,
+          "min_percent_in_zone": 39.82330760197963
+        }
+      }
+    },
+    {
+      "case_id": "dev_flat",
+      "description": "Flat, undisturbed target; a feedback policy should not create a placement advantage.",
+      "geology": {
+        "disturbance_height_ft": 0.0,
+        "regional_dip": 0.0
+      },
+      "label": "Flat control",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "ties": 2,
+          "wins": 0
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "ties": 2,
+          "wins": 0
+        }
+      },
+      "seed_count": 2,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "development",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 100.0,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 0.0,
+          "mean_percent_in_zone": 100.0,
+          "mean_total_inc_change_deg": 18.62889995489644,
+          "min_percent_in_zone": 100.0
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 100.0,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 0.0,
+          "mean_percent_in_zone": 100.0,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 100.0
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 100.0,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 0.0,
+          "mean_percent_in_zone": 100.0,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 100.0
+        }
+      }
+    },
+    {
+      "case_id": "eval_reverse",
+      "description": "Upward regional dip and upward structural change, with nominal sensor calibration.",
+      "geology": {
+        "disturbance_height_ft": -18.0,
+        "disturbance_width_ft": 450.0,
+        "regional_dip": -0.008
+      },
+      "label": "Reverse dip",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 69.99999999999886,
+          "mean": 69.99999999999886,
+          "min": 69.99999999999886,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 57.57875043204712,
+          "mean": 57.57875043204713,
+          "min": 57.57875043204712,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 0.6
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 100.0,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 0.0,
+          "mean_percent_in_zone": 100.0,
+          "mean_total_inc_change_deg": 28.202987247535066,
+          "min_percent_in_zone": 100.0
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 30.000000000001133,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 45.999999999999545,
+          "mean_percent_in_zone": 30.00000000000113,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 30.000000000001133
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 42.42124956795288,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 6.04589745637395,
+          "mean_percent_in_zone": 42.42124956795288,
+          "mean_total_inc_change_deg": 1.007980629909838,
+          "min_percent_in_zone": 42.42124956795288
+        }
+      }
+    },
+    {
+      "case_id": "eval_steep",
+      "description": "Stronger regional dip and an 18-ft target; increased measurement noise.",
+      "geology": {
+        "disturbance_height_ft": 18.0,
+        "disturbance_width_ft": 500.0,
+        "regional_dip": 0.014,
+        "thickness_ft": 18.0
+      },
+      "label": "Steeper / narrower",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 87.14285714285775,
+          "mean": 87.14285714285775,
+          "min": 87.14285714285775,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 58.11436672568454,
+          "mean": 58.11436672568455,
+          "min": 58.11436672568454,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 1.2
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 100.0,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 0.0,
+          "mean_percent_in_zone": 100.0,
+          "mean_total_inc_change_deg": 44.26029442481329,
+          "min_percent_in_zone": 100.0
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 12.857142857142252,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 79.00000000000045,
+          "mean_percent_in_zone": 12.857142857142254,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 12.857142857142252
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 41.88563327431546,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 9.050184421462973,
+          "mean_percent_in_zone": 41.88563327431546,
+          "mean_total_inc_change_deg": 1.438043103167658,
+          "min_percent_in_zone": 41.88563327431546
+        }
+      }
+    },
+    {
+      "case_id": "eval_bias",
+      "description": "Unmodeled +12 API bias, fivefold noise and a 16-ft target.",
+      "geology": {
+        "disturbance_height_ft": 32.0,
+        "disturbance_width_ft": 250.0,
+        "regional_dip": 0.006,
+        "thickness_ft": 16.0
+      },
+      "label": "Biased sensor",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 62.58076402212541,
+          "mean": 60.16303064084225,
+          "min": 56.477498446185876,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 50.709101348114096,
+          "mean": 48.29136796683095,
+          "min": 44.605835772174565,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 12.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 3.0
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 89.24743068879056,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 20.82596445156628,
+          "mean_percent_in_zone": 86.82969730750742,
+          "mean_total_inc_change_deg": 80.92795796073352,
+          "min_percent_in_zone": 83.14416511285103
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 26.66666666666515,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 54.000000000000455,
+          "mean_percent_in_zone": 26.66666666666515,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 26.66666666666515
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 38.53832934067646,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 24.045919531143,
+          "mean_percent_in_zone": 38.53832934067646,
+          "mean_total_inc_change_deg": 0.8715173647089784,
+          "min_percent_in_zone": 38.53832934067646
+        }
+      }
+    },
+    {
+      "case_id": "eval_gradient",
+      "description": "The controller retains its 2 API/ft calibration while the sensor uses 1.2 API/ft and -4 API bias.",
+      "geology": {
+        "disturbance_height_ft": -22.0,
+        "disturbance_width_ft": 400.0,
+        "regional_dip": 0.009,
+        "thickness_ft": 20.0
+      },
+      "label": "Calibration mismatch",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 44.37491420936742,
+          "mean": 42.43167179869691,
+          "min": 41.456598664912875,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 56.85934617358128,
+          "mean": 54.91610376291078,
+          "min": 53.941030629126736,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": -4.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 1.2,
+        "missing_probability": 0.0,
+        "noise_std_api": 2.0
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 97.52132450924368,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 4.21472941623806,
+          "mean_percent_in_zone": 95.57808209857318,
+          "mean_total_inc_change_deg": 63.778370246931956,
+          "min_percent_in_zone": 94.60300896478914
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 53.146410299876266,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 13.000000000000455,
+          "mean_percent_in_zone": 53.146410299876266,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 53.146410299876266
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 40.661978335662404,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 12.050490534440542,
+          "mean_percent_in_zone": 40.661978335662404,
+          "mean_total_inc_change_deg": 1.0913013997436707,
+          "min_percent_in_zone": 40.661978335662404
+        }
+      }
+    },
+    {
+      "case_id": "eval_missing",
+      "description": "35% step-keyed missing observations with a sharper structural change.",
+      "geology": {
+        "disturbance_height_ft": 35.0,
+        "disturbance_width_ft": 200.0,
+        "regional_dip": 0.004,
+        "thickness_ft": 20.0
+      },
+      "label": "Missing measurements",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 54.97470303056717,
+          "mean": 54.36373474688749,
+          "min": 53.68513948430153,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 54.21823682679098,
+          "mean": 53.607268543111296,
+          "min": 52.92867328052534,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.35,
+        "noise_std_api": 2.0
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 92.52842821481622,
+          "mean_fallback_hold_count": 34.2,
+          "mean_max_overshoot_ft": 20.412989292456814,
+          "mean_percent_in_zone": 91.91745993113655,
+          "mean_total_inc_change_deg": 46.30450402743742,
+          "min_percent_in_zone": 91.23886466855058
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 37.553725184249046,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 45.000000000000455,
+          "mean_percent_in_zone": 37.553725184249046,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 37.553725184249046
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 38.31019138802524,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 25.045883911181818,
+          "mean_percent_in_zone": 38.31019138802524,
+          "mean_total_inc_change_deg": 0.7022354210278081,
+          "min_percent_in_zone": 38.31019138802524
+        }
+      }
+    },
+    {
+      "case_id": "eval_delay",
+      "description": "Measurements arrive three 50-ft steps late, retaining their original acquisition pose.",
+      "geology": {
+        "disturbance_height_ft": 30.0,
+        "disturbance_width_ft": 150.0,
+        "regional_dip": 0.007,
+        "thickness_ft": 16.0
+      },
+      "label": "Delayed measurements",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 66.28746570477546,
+          "mean": 65.68790709381804,
+          "min": 65.25942004940624,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 51.22744053755654,
+          "mean": 50.627881926599116,
+          "min": 50.19939488218733,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 3,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 1.2
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 89.14460856191711,
+          "mean_fallback_hold_count": 5.6,
+          "mean_max_overshoot_ft": 23.15444099960937,
+          "mean_percent_in_zone": 88.5450499509597,
+          "mean_total_inc_change_deg": 42.51568553221672,
+          "min_percent_in_zone": 88.1165629065479
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 22.857142857141653,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 57.000000000000455,
+          "mean_percent_in_zone": 22.857142857141653,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 22.857142857141653
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 37.91716802436057,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 22.054922455596625,
+          "mean_percent_in_zone": 37.91716802436057,
+          "mean_total_inc_change_deg": 0.9018036134345095,
+          "min_percent_in_zone": 37.91716802436057
+        }
+      }
+    },
+    {
+      "case_id": "eval_thin_sharp",
+      "description": "An 8-ft target and 38-ft change over 80 ft challenge the command interval and curvature limits.",
+      "geology": {
+        "disturbance_height_ft": 38.0,
+        "disturbance_width_ft": 80.0,
+        "regional_dip": -0.004,
+        "thickness_ft": 8.0
+      },
+      "label": "Thin / abrupt change",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 68.29402929570057,
+          "mean": 66.13780327810564,
+          "min": 64.2552907710145,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 0,
+          "max": 51.35587148476751,
+          "mean": 49.19964546717257,
+          "min": 47.317132960081445,
+          "ties": 0,
+          "wins": 5
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 160.0,
+        "clip_min_api": 20.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 2.0
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 88.58130452985242,
+          "mean_fallback_hold_count": 4.8,
+          "mean_max_overshoot_ft": 33.188143321922325,
+          "mean_percent_in_zone": 86.42507851225749,
+          "mean_total_inc_change_deg": 62.42511632297912,
+          "min_percent_in_zone": 84.54256600516635
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 20.287275234151846,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 26.29991191684894,
+          "mean_percent_in_zone": 20.287275234151846,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 20.287275234151846
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 37.225433045084905,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 34.0496447332564,
+          "mean_percent_in_zone": 37.225433045084905,
+          "mean_total_inc_change_deg": 0.7022354210020012,
+          "min_percent_in_zone": 37.225433045084905
+        }
+      }
+    },
+    {
+      "case_id": "eval_saturation",
+      "description": "An 85-ft abrupt change and narrower instrument range remove usable measurements; HOLD is the fixed fallback.",
+      "geology": {
+        "disturbance_height_ft": 85.0,
+        "disturbance_width_ft": 120.0,
+        "regional_dip": 0.006,
+        "thickness_ft": 14.0
+      },
+      "label": "Saturation / large change",
+      "paired": {
+        "guided_minus_hold_pp": {
+          "losses": 0,
+          "max": 14.001156435877824,
+          "mean": 13.993956959981087,
+          "min": 13.98104928376491,
+          "ties": 0,
+          "wins": 5
+        },
+        "guided_minus_regional_plan_pp": {
+          "losses": 2,
+          "max": 0.008369603525707703,
+          "mean": 0.0011701276289713292,
+          "min": -0.011737548587205993,
+          "ties": 0,
+          "wins": 3
+        }
+      },
+      "seed_count": 5,
+      "sensor": {
+        "bias_api": 0.0,
+        "clip_max_api": 105.0,
+        "clip_min_api": 60.0,
+        "delay_steps": 0,
+        "gradient_api_per_ft": 2.0,
+        "missing_probability": 0.0,
+        "noise_std_api": 2.0
+      },
+      "split": "evaluation",
+      "strategies": {
+        "guided": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 37.33448976920964,
+          "mean_fallback_hold_count": 62.0,
+          "mean_max_overshoot_ft": 77.86253973892549,
+          "mean_percent_in_zone": 37.3272902933129,
+          "mean_total_inc_change_deg": 24.55590511231382,
+          "min_percent_in_zone": 37.314382617096726
+        },
+        "hold": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 23.333333333331815,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 108.00000000000045,
+          "mean_percent_in_zone": 23.333333333331815,
+          "mean_total_inc_change_deg": 0.0,
+          "min_percent_in_zone": 23.333333333331815
+        },
+        "regional_plan": {
+          "max_dls_violation_count": 0,
+          "max_percent_in_zone": 37.32612016568393,
+          "mean_fallback_hold_count": 0.0,
+          "mean_max_overshoot_ft": 78.045919531143,
+          "mean_percent_in_zone": 37.32612016568393,
+          "mean_total_inc_change_deg": 0.8715173647089784,
+          "min_percent_in_zone": 37.32612016568393
+        }
+      }
+    }
+  ],
+  "counts": {
+    "development_cases": 2,
+    "evaluation_cases": 8,
+    "trial_count": 132
+  },
+  "evaluation": {
+    "dls_violation_count": 0,
+    "mean_percent_in_zone": {
+      "guided": 85.8278322617184,
+      "hold": 28.337712054069897,
+      "regional_plan": 39.285762892720236
+    },
+    "paired": {
+      "guided_minus_hold_pp": {
+        "losses": 0,
+        "max": 87.14285714285775,
+        "mean": 57.49012020764851,
+        "min": 13.98104928376491,
+        "ties": 0,
+        "wins": 40
+      },
+      "guided_minus_regional_plan_pp": {
+        "losses": 2,
+        "max": 58.11436672568454,
+        "mean": 46.54206936899817,
+        "min": -0.011737548587205993,
+        "ties": 0,
+        "wins": 38
+      }
+    }
+  },
+  "interpretation_notes": [
+    "Synthetic, handpicked cases; descriptive results do not estimate real-field performance.",
+    "The evaluation cases and noise seeds were declared before this study run; the policy was not retuned using these results.",
+    "Seed ranges describe repeated measurement noise within one fixed geology; they are not confidence intervals over geology.",
+    "The original signed-distance guided controller is unchanged. A fixed wrapper rejects saturated or missing measurements and retains delayed acquisition poses.",
+    "When a step delivers no usable measurement, guided uses HOLD. Old observations enter the controller history only once.",
+    "All strategies share landing state, geology, step-keyed noise and missingness, the 5,000-ft denominator, and the 3 degrees/100 ft lateral limit.",
+    "The offset-derived plan uses exact synthetic boundary picks at x=0, 500 and 900 ft and never updates from active-well logs."
+  ],
+  "manifest_sha256": "7eeace775f72c3f84dd30cdeb6cdf3f8902e99d333ffc55ea54bf44674b6064b",
+  "policy_version": "reference-guided-with-validity-gate-v1",
+  "schema_version": 1,
+  "source_fingerprint": "cfef4742e203f9315a95ec6acb5f6ee187f059c4e049c0a5089c76dd5951a65f",
+  "strategies": {
+    "guided": "Observation-guided",
+    "hold": "HOLD",
+    "regional_plan": "Offset-derived plan"
+  },
+  "study_id": "robustness-v1",
+  "worst_guided": {
+    "action_change_count": 26,
+    "avg_center_distance_ft": 50.97948376901406,
+    "case_id": "eval_saturation",
+    "clipped_command_count": 3,
+    "dls_violation_count": 0,
+    "evaluated_length_ft": 5000.0,
+    "fallback_hold_count": 62,
+    "in_zone_length_ft": 1865.7191308548363,
+    "integration_step_max_ft": 1.0,
+    "max_dls_deg_per_100ft": 3.000000000000017,
+    "max_overshoot_ft": 78.02989347467451,
+    "missing_measurement_count": 0,
+    "percent_in_zone": 37.314382617096726,
+    "saturated_measurement_count": 62,
+    "seed": 1013,
+    "total_inc_change_deg": 23.576156343544227,
+    "usable_measurement_count": 38
+  }
+}

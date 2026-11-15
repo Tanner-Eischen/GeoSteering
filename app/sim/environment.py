@@ -73,6 +73,15 @@ def initialize_environment(scope, config, frames, hidden_truth_path=None) -> Non
         "private_scenario_sha256": hashlib.sha256((root / "scenario.json").read_bytes()).hexdigest(),
         "source_truth_sha256": hashlib.sha256(Path(hidden_truth_path).read_bytes()).hexdigest() if hidden_truth_path else None,
     })
+    # Public mechanics are captured independently of private geological truth.
+    # Operator previews must never load the scenario or sample future sensors.
+    atomic_write_json(root / "mechanics.json", {
+        "max_dls_deg_per_100ft": min(config.max_dls_deg_per_100ft, scenario.max_dls_deg_per_100ft),
+        "min_inc_deg": 85.0, "max_inc_deg": 95.0,
+    })
+    provenance = read_json(root / "provenance.json")
+    provenance["mechanics_sha256"] = hashlib.sha256((root / "mechanics.json").read_bytes()).hexdigest()
+    atomic_write_json(root / "provenance.json", provenance)
     atomic_write_json(root / "state.json", {"trajectory": acquired.to_dict(orient="records"),
                                            "logs": logs.to_dict(orient="records"), "commands": []})
 

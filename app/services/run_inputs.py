@@ -32,10 +32,23 @@ def input_paths(project_root, scope, well_id) -> dict[str, Path]:
 def describe_run_inputs(scope, config) -> dict:
     provenance = describe_code()
     paths = sorted((Path(scope) / "inputs").rglob("*"))
+    ensemble = None
+    if config.ensemble_settings is not None:
+        from app.io.project_store import read_json
+        pinned = read_json(Path(scope) / "inputs" / "ensemble_settings.json")
+        ensemble = {"settings": pinned["settings"], "settings_sha256": pinned["settings_sha256"],
+                    "baseline_sha256": pinned["baseline_sha256"],
+                    "observation_contract": "At most one acquired GR sample per step at its original acquired pose"}
     return {
         "run_id": config.run_id,
         "plan_id": config.plan_id,
+        "geological_model": ({"version_id": config.geological_model.interpretation.version_id,
+                                "model_sha256": config.geological_model.model_sha256,
+                                "offset_well_ids": config.geological_model.offset_well_ids,
+                                "evidence_hashes": config.geological_model.input_hashes}
+                               if config.geological_model is not None else None),
         "mode": config.mode,
+        "ensemble": ensemble,
         "seed": config.seed,
         "scenario_version": config.scenario_version,
         "code_revision": provenance["code_revision"],

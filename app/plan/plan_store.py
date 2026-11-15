@@ -6,7 +6,7 @@ from uuid import uuid4
 import pandas as pd
 
 from app.io.project_store import atomic_write_json, read_json
-from app.model.schemas import DLSExceedance, Plan, PlanParameters
+from app.model.schemas import DLSExceedance, Plan, PlanParameters, PrejobModel
 
 
 def save_plan(
@@ -16,8 +16,13 @@ def save_plan(
     stations: pd.DataFrame,
     dls_max_deg_per_100ft: float,
     exceedances: list[DLSExceedance],
+    *,
+    geological_model: PrejobModel | None = None,
 ) -> Plan:
     root = Path(project_root)
+    if geological_model is not None:
+        from app.services.prejob import validate_prejob_model
+        validate_prejob_model(root, geological_model)
     plans_dir = root / "plans"
     plans_dir.mkdir(parents=True, exist_ok=True)
 
@@ -33,6 +38,7 @@ def save_plan(
         stations_path=stations_rel,
         dls_max_deg_per_100ft=dls_max_deg_per_100ft,
         dls_exceedances=exceedances,
+        geological_model=geological_model,
     )
     atomic_write_json(plans_dir / f"{plan_id}.json", plan.model_dump(mode="json"))
     return plan

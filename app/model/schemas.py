@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import datetime, timezone
 from typing import Dict, List, Literal, Optional
 from uuid import uuid4
@@ -144,6 +146,30 @@ class InterpretationVersion(ScientificModel):
         return sorted(points, key=lambda p: p.x_ft if all(spatial) else p.md_ft)
 
 
+class PrejobModel(ScientificModel):
+    """Frozen geological interpretation and the observed inputs that support it."""
+
+    interpretation: InterpretationVersion
+    active_well_id: str
+    offset_well_ids: List[str]
+    well_names: Dict[str, str]
+    input_hashes: Dict[str, str]
+    model_sha256: str = ""
+
+    @model_validator(mode="after")
+    def valid_snapshot(self) -> "PrejobModel":
+        if len(set(self.offset_well_ids)) != len(self.offset_well_ids) or len(self.offset_well_ids) < 2:
+            raise ValueError("A pre-job model requires at least two distinct offsets")
+        if self.active_well_id in self.offset_well_ids:
+            raise ValueError("The active well cannot support its pre-job offset model")
+        payload = self.model_dump(mode="json", exclude={"model_sha256"})
+        digest = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if self.model_sha256 and self.model_sha256 != digest:
+            raise ValueError("Saved pre-job model content does not match its hash")
+        self.model_sha256 = digest
+        return self
+
+
 class Recommendation(ScientificModel):
     action: Literal["HOLD", "BUILD", "DROP"]
     target_inc_deg: Optional[float] = Field(default=None, ge=0, le=180)
@@ -193,4 +219,5 @@ class Plan(ScientificModel):
     stations_path: str
     dls_max_deg_per_100ft: float
     dls_exceedances: List[DLSExceedance] = Field(default_factory=list)
+    geological_model: PrejobModel | None = None
 
