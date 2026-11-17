@@ -5,3 +5,4 @@ recursive-include docs *.md *.png
 recursive-include case_studies *.json *.md
 recursive-include case_studies/robustness_v1 *.csv *.png *.gz *.zip *.py *.toml *.txt
 recursive-include case_studies/uncertainty_v1 *.csv *.png *.gz *.zip *.py *.toml *.txt
+recursive-include case_studies/calibration_v2 *.csv *.png *.gz *.zip *.py *.toml *.txt

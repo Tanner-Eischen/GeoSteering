@@ -29,7 +29,7 @@ def build_correlation_figure(
         fig.update_layout(title="No wells selected")
         return fig
 
-    selected_curves = list(curves or ["GR", "RES"])
+    selected_curves = list(["GR", "RES"] if curves is None else curves)
     shifts = display_shifts_ft or {}
     markers_by_well = markers_by_well or {}
     x_ranges = x_ranges or {}
@@ -95,7 +95,7 @@ def build_correlation_figure(
                 go.Scatter(
                     x=x,
                     y=y,
-                    mode="lines",
+                    mode="lines+markers" if len(df) == 1 else "lines",
                     name=curve,
                     legendgroup=curve,
                     showlegend=showlegend,
@@ -106,7 +106,10 @@ def build_correlation_figure(
             )
 
         for marker in markers_by_well.get(well_name, []):
-            y_val = float(marker["md_ft"]) + shift
+            marker_depth = float(marker["md_ft"])
+            if df.empty or marker_depth < float(df.md_ft.min()) or marker_depth > float(df.md_ft.max()):
+                continue
+            y_val = marker_depth + shift
             fig.add_hline(
                 y=y_val,
                 line_dash="dot",
@@ -132,6 +135,9 @@ def build_correlation_figure(
         else:
             fig.update_xaxes(title_text=title_curves, row=1, col=i)
 
-    fig.update_yaxes(autorange="reversed", title_text="MD (ft)")
-    fig.update_layout(height=780, margin={"l": 32, "r": 16, "t": 64, "b": 32}, legend_title_text="Curves")
+    fig.update_yaxes(autorange="reversed", automargin=True)
+    fig.update_yaxes(title_text="MD (ft)", row=1, col=1)
+    if depth_min is not None and depth_max is not None and not shifts:
+        fig.update_yaxes(range=[depth_max, depth_min], autorange=False)
+    fig.update_layout(height=560, margin={"l": 32, "r": 16, "t": 64, "b": 32}, legend_title_text="Curves")
     return fig

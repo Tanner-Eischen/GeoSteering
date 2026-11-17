@@ -11,6 +11,8 @@ def test_switching_projects_discards_derived_controls_and_preview(tmp_path):
         "decision_review_step_old": 12, "comparison_left_old": "old", "evaluation_run_old": "old",
         "review_run_old": "old", "run_compare_left_old": "old",
         "import_well_folder": "old import", "sidebar_page": "Planning",
+        "import_results_old": "old outcomes", "viewer_old_depth_min": 1500,
+        "chart_old_reset_count": 2, "command_old_evidence": "previous project evidence",
     }
     activate_project(session, tmp_path / "second")
     assert session == {"project_root": str(tmp_path / "second"), "sidebar_page": "Planning"}

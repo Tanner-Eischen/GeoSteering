@@ -11,9 +11,16 @@ def ensemble_figure(forecast, trajectory):
         fig.add_trace(go.Scatter(x=x, y=forecast["members"]["center_tvd_ft"][member],
                                  name="Weighted model samples", legendgroup="samples", showlegend=index == 0,
                                  line={"color": "rgba(65,110,127,0.18)", "width": 1}, hoverinfo="skip"))
+    envelope = forecast.get("calibration_envelope")
+    if envelope:
+        fig.add_trace(go.Scatter(x=x, y=envelope["center"]["q05"], showlegend=False,
+                                 line={"width": 0}, hoverinfo="skip"))
+        fig.add_trace(go.Scatter(x=x, y=envelope["center"]["q95"], name="Calibration envelope · center",
+                                 fill="tonexty", fillcolor="rgba(99,102,140,0.16)", line={"width": 0}))
     fig.add_trace(go.Scatter(x=x, y=forecast["center"]["q05"], showlegend=False,
                              line={"width": 0}, hoverinfo="skip"))
-    fig.add_trace(go.Scatter(x=x, y=forecast["center"]["q95"], name="90% model interval · center",
+    fig.add_trace(go.Scatter(x=x, y=forecast["center"]["q95"],
+                             name="Assumed-mixture 90% interval" if envelope else "90% model interval · center",
                              fill="tonexty", fillcolor="rgba(15,118,110,0.18)", line={"width": 0}))
     fig.add_trace(go.Scatter(x=x, y=forecast["center"]["q50"], name="Median center",
                              line={"color": "#0f766e", "width": 3}))

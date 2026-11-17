@@ -50,6 +50,34 @@ python -m build
 streamlit run app.py
 ```
 
+The sidebar groups pages into **Prepare data**, **Interpret and steer**, and
+**Review and export**. **Open / create project** opens a full-width setup page;
+**Import well data** opens file uploads or a batch folder review with editable
+well names, file checks and persistent per-well results. After importing, use
+Data QC for warnings and Well Viewer for the acquired logs.
+
+Main inspection charts have **Pan**, **Box zoom**, **Reset view**, and an optional
+**Wheel zoom** control. Wheel zoom starts off so scrolling over a chart can
+continue down the page. Correlation's **Wells per chart** displays one, two or
+three tracks without changing the wells selected as interpretation evidence.
+The **Correlate & edit** workspace keeps the chart beside the marker editor and
+follows the well being edited. Orange dashed lines preview unsaved depth changes;
+**Update Marker** saves them. Chart zoom is retained through these edits and saves.
+**View options** holds alignment/scaling/group settings, and **Interpretations**
+holds model saving and evidence. Marker edits always use MD, even in a TVD view.
+Changing pages opens the new page at its header. Depth limits and curve ranges change the display;
+marker edits explicitly save to the selected well. Planning refreshes its preview
+automatically when you press Enter or leave an edited field, and offers a direct CSV download. Its **Plan & preview**
+workspace keeps the inputs and save actions beside a pinned trajectory/DLS chart.
+Invalid or incomplete inputs show validation feedback and block saving until corrected.
+**Save Plan** is still explicit. **Details & data** holds captured model evidence and station tables.
+Steering's
+**Steer** tab keeps acquired-data charts beside the command and evidence panel.
+Use **Path + preview** for causal next-station geometry and **Chart controls**
+for pan/zoom/reset. The chart stays visible while expanding interpretation
+controls on wider screens. **History & results** and **Run setup** hold the
+secondary workflows; very narrow screens stack the panels.
+
 Use Dashboard's case-study loader to start a guided replay at landing. You can also start a **new isolated run** in Interpretation and Steering. Earlier runs and their histories remain available for export.
 
 In Correlation, save an interpretation from the offset wells you selected. In
@@ -73,8 +101,11 @@ DLS and downloads for the selected completed run, with links back to decisions
 and report export.
 
 For the known synthetic GR model, enable **uncertainty ensemble** when creating
-a new isolated run. **Uncertainty** shows saved weighted intervals, effective
-model count, and conditional next-command probabilities. Each snapshot uses only
+a new isolated run. New runs default to a calibration-sensitivity ensemble:
+five persistent GR-bias assumptions retain their own geological alternatives.
+**Uncertainty** shows the interval envelope across those assumptions, minimum
+conditional effective model count, and a range of next-command probabilities.
+The narrower equal-weight mixture remains separately labeled. Each snapshot uses only
 acquired measurements and survives retries, forks and historical review. This
 model is separate from the original manually interpreted boundaries and assumed
 uncertainty band.
@@ -86,8 +117,23 @@ biased-sensor trial covered just 3/101 stations despite healthy particle
 diagnostics. Inspect **Calibration evidence** before interpreting probabilities
 as reliable confidence.
 
+The new model addresses this failure by preserving calibration ambiguity. Its
+fixed assumptions span -16 to +16 API; GR does not learn their weights. The
+envelope is a sensitivity range, not a calibrated 90% confidence interval, and
+bias outside the declared range can still defeat it. Original v1 runs and their
+frozen evidence remain inspectable. A separate paired study compares both models
+on identical observations, separating the reused failure from new evaluation
+configurations.
+
+In the [20-pair calibration study](case_studies/calibration_v2/README.md), fresh
+posterior center coverage rises from 47.63% to 78.22% for the mixture and 79.43%
+for the envelope, with wider intervals and no median-accuracy gain. A +28 API
+outside-support trial still covers 0/101 posterior stations. Those failures
+remain in the app's evidence view and the updated [case study](docs/case-study.md).
+
 ```powershell
 python -m tools.run_uncertainty_study --out output/uncertainty-study
+python -m tools.run_calibration_study --out output/calibration-study
 ```
 
 Open **Robustness Study** for the separate frozen 132-trial benchmark: eight

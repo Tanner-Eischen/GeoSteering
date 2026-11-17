@@ -1,0 +1,212 @@
+{
+  "baseline_settings": {
+    "center_process_std_ft": 2.0,
+    "dip_bound": 0.15,
+    "dip_process_std": 0.002,
+    "forecast_grid_step_ft": 50.0,
+    "member_count": 256,
+    "model_discrepancy_std_api": 4.0,
+    "prior_center_std_ft": 10.0,
+    "prior_dip_std": 0.006,
+    "prior_thickness_relative_std": 0.1,
+    "process_reference_step_ft": 50.0,
+    "resample_ess_fraction": 0.5,
+    "sensor_center_api": 80.0,
+    "sensor_clip_max_api": 160.0,
+    "sensor_clip_min_api": 20.0,
+    "sensor_gradient_api_per_ft": 2.0,
+    "sensor_noise_std_api": 0.6,
+    "version": "spatial-particle-v1"
+  },
+  "cases": [
+    {
+      "case_id": "dev_historical_bias",
+      "description": "Reused +8 API failure",
+      "evidence_status": "diagnostic_reused",
+      "geology": {
+        "disturbance_height_ft": -16.0,
+        "disturbance_width_ft": 350.0,
+        "disturbance_x_ft": 2600.0,
+        "regional_dip": -0.003,
+        "thickness_ft": 18.0
+      },
+      "historical_reference": "uncertainty_v1/eval_bias/7001",
+      "label": "Reused +8 API failure",
+      "sensor": {
+        "bias_api": 8.0
+      },
+      "split": "development"
+    },
+    {
+      "case_id": "dev_nominal_control",
+      "description": "Nominal development control",
+      "evidence_status": "development_control",
+      "geology": {
+        "disturbance_height_ft": 0.0,
+        "regional_dip": 0.001,
+        "thickness_ft": 24.0
+      },
+      "historical_reference": null,
+      "label": "Nominal development control",
+      "sensor": {},
+      "split": "development"
+    },
+    {
+      "case_id": "eval_negative_bias",
+      "description": "Fresh \u221212 API bias",
+      "evidence_status": "fresh_evaluation",
+      "geology": {
+        "disturbance_height_ft": -12.0,
+        "disturbance_width_ft": 550.0,
+        "disturbance_x_ft": 2750.0,
+        "regional_dip": 0.0035,
+        "thickness_ft": 21.0
+      },
+      "historical_reference": null,
+      "label": "Fresh \u221212 API bias",
+      "sensor": {
+        "bias_api": -12.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_between_positive",
+      "description": "Fresh +5 API bias",
+      "evidence_status": "fresh_evaluation",
+      "geology": {
+        "disturbance_height_ft": -10.0,
+        "disturbance_width_ft": 475.0,
+        "disturbance_x_ft": 3150.0,
+        "regional_dip": -0.0045,
+        "thickness_ft": 19.0
+      },
+      "historical_reference": null,
+      "label": "Fresh +5 API bias",
+      "sensor": {
+        "bias_api": 5.0,
+        "noise_std_api": 1.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_nominal_noisy",
+      "description": "Fresh nominal / noisy",
+      "evidence_status": "fresh_evaluation",
+      "geology": {
+        "disturbance_height_ft": 14.0,
+        "disturbance_width_ft": 650.0,
+        "disturbance_x_ft": 2350.0,
+        "regional_dip": 0.0085,
+        "thickness_ft": 25.0
+      },
+      "historical_reference": null,
+      "label": "Fresh nominal / noisy",
+      "sensor": {
+        "noise_std_api": 3.0
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_missing",
+      "description": "Fresh missing observations",
+      "evidence_status": "fresh_evaluation",
+      "geology": {
+        "disturbance_height_ft": 18.0,
+        "disturbance_width_ft": 280.0,
+        "disturbance_x_ft": 3250.0,
+        "regional_dip": 0.0048,
+        "thickness_ft": 17.0
+      },
+      "historical_reference": null,
+      "label": "Fresh missing observations",
+      "sensor": {
+        "bias_api": 8.0,
+        "missing_probability": 0.3
+      },
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_abrupt_saturation",
+      "description": "Fresh abrupt / saturation",
+      "evidence_status": "fresh_evaluation",
+      "geology": {
+        "disturbance_height_ft": 65.0,
+        "disturbance_width_ft": 100.0,
+        "disturbance_x_ft": 2650.0,
+        "regional_dip": 0.0032,
+        "thickness_ft": 9.0
+      },
+      "historical_reference": null,
+      "label": "Fresh abrupt / saturation",
+      "sensor": {},
+      "split": "evaluation"
+    },
+    {
+      "case_id": "eval_outside_support",
+      "description": "Fresh +28 API outside support",
+      "evidence_status": "fresh_evaluation",
+      "geology": {
+        "disturbance_height_ft": -8.0,
+        "disturbance_width_ft": 525.0,
+        "disturbance_x_ft": 2950.0,
+        "regional_dip": -0.0022,
+        "thickness_ft": 23.0
+      },
+      "historical_reference": null,
+      "label": "Fresh +28 API outside support",
+      "sensor": {
+        "bias_api": 28.0
+      },
+      "split": "evaluation"
+    }
+  ],
+  "design_note": "Bias hypotheses \u00b116 API with equal fixed weights were chosen empirically after observing the old +8 API failure. They define sensitivity support, not identified calibration probabilities or calibrated coverage.",
+  "development_seeds": [
+    7001
+  ],
+  "ensemble_seed_offset": 900000,
+  "evaluation_seeds": [
+    8101,
+    8103,
+    8107
+  ],
+  "forecast_horizons_ft": [
+    250.0,
+    500.0
+  ],
+  "historical_evidence": {
+    "case_id": "eval_bias",
+    "manifest_sha256": "2ae18d4b0524e3e8421ad16c966abee65b757c3640b4a12e65ba9a7f0e203a36",
+    "seed": 7001,
+    "summary_sha256": "f165d8d208c6b4d7dddebde83f8a990f9fd53fb01620cd69c18d7ae62dbb0318"
+  },
+  "nominal_level": 0.9,
+  "schema_version": 1,
+  "sensitivity_settings": {
+    "calibration_biases_api": [
+      -16.0,
+      -8.0,
+      0.0,
+      8.0,
+      16.0
+    ],
+    "center_process_std_ft": 2.0,
+    "dip_bound": 0.15,
+    "dip_process_std": 0.002,
+    "forecast_grid_step_ft": 50.0,
+    "member_count": 256,
+    "model_discrepancy_std_api": 4.0,
+    "prior_center_std_ft": 10.0,
+    "prior_dip_std": 0.006,
+    "prior_thickness_relative_std": 0.1,
+    "process_reference_step_ft": 50.0,
+    "resample_ess_fraction": 0.5,
+    "sensor_center_api": 80.0,
+    "sensor_clip_max_api": 160.0,
+    "sensor_clip_min_api": 20.0,
+    "sensor_gradient_api_per_ft": 2.0,
+    "sensor_noise_std_api": 0.6,
+    "version": "spatial-calibration-v2"
+  },
+  "study_id": "calibration-sensitivity-v2"
+}

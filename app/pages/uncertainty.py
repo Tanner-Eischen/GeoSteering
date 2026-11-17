@@ -15,7 +15,7 @@ from app.services.uncertainty import load_uncertainty_snapshot
 from app.services.uncertainty_assessment import assess_commands
 from app.ui.theme import render_page_header
 from app.ui.workspace import remember_selected_run, selected_run_choice
-from app.uncertainty.ensemble import forecast_ensemble, summarize_ensemble, target_probability
+from app.uncertainty.ensemble import forecast_ensemble, summarize_ensemble, target_probability, target_probability_range
 
 PHASES = {"prior_current": "Before observation", "posterior_current": "After observation",
           "forecast_250": "250-ft forecast", "forecast_500": "500-ft forecast"}
@@ -37,18 +37,36 @@ def render_snapshot(snapshot, trajectory, compact=False):
         cards = summarize_ensemble(state)
         index = 0
     width = cards["center"]["q95"][index] - cards["center"]["q05"][index]
+    calibration = state.get("version") == "spatial-calibration-state-v2"
     a, b, c = st.columns(3)
-    a.metric("90% center interval width", f"{width:.2f} ft")
-    b.metric("Effective model count", f"{state['ess']:.1f} / {len(state['members'])}")
-    if bit is not None and bit_x in grid:
-        probability = target_probability(cards, index, float(bit.tvd_ft))
-        c.metric("Model probability in target", f"{100 * probability:.1f}%")
+    has_bit_probability = bit is not None and bit_x in grid
+    probability = target_probability(cards, index, float(bit.tvd_ft)) if has_bit_probability else None
+    if calibration:
+        envelope = cards["calibration_envelope"]["center"]
+        envelope_width = envelope["q95"][index] - envelope["q05"][index]
+        effective_count = min(cards["conditional_ess"])
+        member_count = state["settings"]["member_count"]
+        a.metric("Calibration envelope width", f"{envelope_width:.2f} ft")
+        b.metric("Minimum effective models", f"{effective_count:.1f} / {member_count}")
+        if has_bit_probability:
+            lower, upper = target_probability_range(cards, index, float(bit.tvd_ft))
+            c.metric("Target probability range", f"{100 * lower:.1f}–{100 * upper:.1f}%")
+        else:
+            c.metric("Target probability range", "Unavailable")
+        biases = ", ".join(f"{value:+g}" for value in state["settings"]["calibration_biases_api"])
+        st.caption(f"V2 calibration hypotheses: {biases} API persistent bias, with fixed equal weights. GR alone cannot identify the true bias.")
+        st.caption("The calibration envelope spans the conditional 90% intervals across those hypotheses. It is not itself a 90% confidence interval or a coverage guarantee. Effective models are counted per hypothesis.")
+        pooled = f"{100 * probability:.1f}% in target" if probability is not None else "target probability unavailable"
+        st.caption(f"Assumed-mixture summary: 90% center width {width:.2f} ft · {pooled}. This pooled result depends on the declared equal hypothesis weights.")
     else:
-        c.metric("Model probability in target", "Unavailable")
-    st.caption("Probabilities and nominal 90% intervals are conditional on the declared synthetic sensor and geological process model. They are not field-calibrated confidence.")
+        effective_count, member_count = state["ess"], len(state["members"])
+        a.metric("90% center interval width", f"{width:.2f} ft")
+        b.metric("Effective model count", f"{effective_count:.1f} / {member_count}")
+        c.metric("Model probability in target", f"{100 * probability:.1f}%" if probability is not None else "Unavailable")
+        st.caption("Legacy v1 · known nominal calibration. Probabilities and nominal 90% intervals are conditional on the declared synthetic sensor and geological process model. They are not field-calibrated confidence.")
     st.caption("Effective model count measures weight concentration, not whether the geological or sensor assumptions are correct.")
-    if state["ess"] < len(state["members"]) / 4:
-        st.warning("Few ensemble members carry most of the weight. The interval may be unreliable; inspect calibration and measurement diagnostics.")
+    if effective_count < member_count / 4:
+        st.warning("Few models carry most of the conditional weight. Inspect calibration assumptions and measurement diagnostics before interpreting a narrow interval.")
     diagnostic = state.get("last_update", {})
     if diagnostic.get("predictive_conflict"):
         st.warning("The measurement conflicts with the model's prior prediction. A narrow posterior does not resolve possible model mismatch.")
@@ -59,7 +77,9 @@ def render_snapshot(snapshot, trajectory, compact=False):
         st.caption(f"No new located GR measurement · {snapshot['observation_status']} · acquired step {snapshot['step_index']}")
     if not compact:
         st.plotly_chart(ensemble_figure(forecast, trajectory), width="stretch")
-        st.caption("The shaded region describes uncertainty in the target center; median top/base lines describe layer geometry. Thickness uncertainty is retained independently because this GR model cannot identify it.")
+        st.caption("The outer shade is the calibration envelope; the inner band is the assumed-mixture 90% center interval. Median top/base lines describe the layer geometry."
+                   if calibration else "The shaded region describes uncertainty in the target center; median top/base lines describe layer geometry.")
+        st.caption("Thickness uncertainty is retained independently because this GR model cannot identify it.")
     return forecast
 
 
@@ -106,10 +126,25 @@ def _live(project_root):
     else:
         try:
             assessment = assess_commands(root, run_id, step)
-            st.dataframe(pd.DataFrame(assessment["actions"]), hide_index=True, width="stretch",
-                         column_config={"Model probability in target (%)": st.column_config.NumberColumn(format="%.1f"),
-                                        "Center interval width (ft)": st.column_config.NumberColumn(format="%.2f")})
+            formats = {name: st.column_config.NumberColumn(format="%.1f" if "probability" in name.lower() else "%.2f")
+                       for name in assessment["actions"][0] if "probability" in name.lower() or "width" in name.lower()}
+            if "calibration_envelope" in assessment["forecast"]:
+                compact_rows = [{"Action": row["Action"],
+                                 "Target range": f"{row['Min conditional probability (%)']:.1f}–{row['Max conditional probability (%)']:.1f}%",
+                                 "Envelope (ft)": row["Calibration envelope width (ft)"]}
+                                for row in assessment["actions"]]
+                st.dataframe(pd.DataFrame(compact_rows), hide_index=True, width="stretch",
+                             column_config={"Envelope (ft)": st.column_config.NumberColumn(format="%.2f")})
+                st.caption("Target range spans the conditional in-target probabilities; envelope width describes uncertainty in the center at the next station.")
+                with st.expander("Command geometry and assumed-mixture details"):
+                    st.dataframe(pd.DataFrame(assessment["actions"]), hide_index=True, width="stretch",
+                                 column_config=formats)
+            else:
+                st.dataframe(pd.DataFrame(assessment["actions"]), hide_index=True, width="stretch",
+                             column_config=formats)
             st.caption("All three commands use the same geological forecast draws. These are probabilities at the next projected station, not whole-well success rates or a command commitment.")
+            if "calibration_envelope" in assessment["forecast"]:
+                st.caption("The detailed assumed-mixture probability depends on fixed equal hypothesis weights; it does not establish which calibration is correct.")
         except (ValueError, OSError) as exc:
             st.info(str(exc))
     with st.expander("Frozen assumptions and measurement diagnostics"):
@@ -119,6 +154,9 @@ def _live(project_root):
         st.json(snapshot["ensemble"].get("last_update", {}))
         st.caption(f"Settings hash: {snapshot['settings_sha256']} · Baseline hash: {snapshot['baseline_sha256']}")
     columns = {"x_ft": forecast["x_ft"], **{f"center_{q}_tvd_ft": values for q, values in forecast["center"].items()}}
+    if "calibration_envelope" in forecast:
+        columns.update({f"calibration_envelope_center_{q}_tvd_ft": values
+                        for q, values in forecast["calibration_envelope"]["center"].items()})
     a, b = st.columns(2)
     a.download_button("Download ensemble snapshot", json.dumps(snapshot, indent=2, allow_nan=False).encode(),
                        file_name=f"ensemble-{run_id}-step-{step}.json", mime="application/json", on_click="ignore")
@@ -127,6 +165,16 @@ def _live(project_root):
 
 
 def _calibration():
+    choice = st.radio("Calibration evidence version", ["Persistent calibration sensitivity", "Original known-calibration study"],
+                      key="uncertainty_evidence_version")
+    if choice == "Persistent calibration sensitivity":
+        from app.pages.calibration_evidence import render as render_calibration_evidence
+        render_calibration_evidence()
+    else:
+        _legacy_calibration()
+
+
+def _legacy_calibration():
     try:
         from app.study.uncertainty_calibration import DEFAULT_RESULTS, load_uncertainty_summary
         summary = load_uncertainty_summary()
@@ -174,8 +222,8 @@ def _calibration():
 
 
 def render(project_root):
-    render_page_header("Uncertainty", "Inspect plausible geology, conditional command probabilities and measured interval coverage.",
-                       chips=["Acquired measurements only", "Frozen model assumptions", "Nominal 90% intervals"])
+    render_page_header("Uncertainty", "Inspect plausible geology, calibration sensitivity and measured interval coverage.",
+                       chips=["Acquired measurements only", "Frozen model assumptions", "Explicit calibration assumptions"])
     live, calibration = st.tabs(["Run ensemble", "Calibration evidence"])
     with live:
         _live(project_root)

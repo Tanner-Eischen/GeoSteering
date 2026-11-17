@@ -1,0 +1,14 @@
+{
+  "evaluation_geology_disjoint": true,
+  "evaluation_seeds_disjoint": true,
+  "previous_protocols": [
+    {
+      "manifest_sha256": "7eeace775f72c3f84dd30cdeb6cdf3f8902e99d333ffc55ea54bf44674b6064b",
+      "study": "robustness_v1"
+    },
+    {
+      "manifest_sha256": "2ae18d4b0524e3e8421ad16c966abee65b757c3640b4a12e65ba9a7f0e203a36",
+      "study": "uncertainty_v1"
+    }
+  ]
+}

@@ -12,90 +12,81 @@ from app.ui.theme import render_page_header
 from app.ui.workspace import activate_project
 
 
-def render(project_root: str | None) -> None:
-    render_page_header(
-        "Dashboard",
-        "Project readiness summary and quick quality signal before interpretation and steering.",
-    )
-    st.markdown("#### Geosteering under structural uncertainty")
-    st.write("Three offsets constrain an initial regional model. Reveal active-well data, revise the interpretation, and evaluate against withheld geology after completion.")
-    st.caption("Workflow: Scenario → QC → Correlation → Planning → Interpretation/steering → Evaluation → Report")
-    with st.container(border=True):
-        st.markdown("**Beyond the reference result**")
-        st.write("Explore paired HOLD, regional-plan and guided strategies across held-out geology and imperfect sensors, including the cases where guidance fails.")
-        if st.button("Explore Robustness Study"):
-            st.session_state["nav_target"] = "Robustness Study"
-            st.rerun()
-    if st.button("Load Case Study in a new workspace"):
+def _link(label: str, page: str, *, primary: bool = False) -> None:
+    if st.button(label, type="primary" if primary else "secondary", use_container_width=True):
+        st.session_state["nav_target"] = page
+        st.rerun()
+
+
+def _case_study_loader() -> None:
+    st.caption("Four synthetic wells, offset picks and a replay ready at landing. Creates a separate project folder.")
+    if st.button("Load Case Study in a new workspace", type="primary"):
         from tools.bootstrap_demo_project import bootstrap_demo_project
         workspace = Path("data") / "case_studies" / str(uuid4())
         try:
-            bootstrap_demo_project(workspace, workspace.parent / f"{workspace.name}_inputs", steps=0)
-        except (OSError, ValueError):
-            st.error("The new case-study workspace could not be created. Check filesystem access and retry to create a fresh workspace.")
+            with st.spinner("Preparing the four-well case study…"):
+                bootstrap_demo_project(workspace, workspace.parent / f"{workspace.name}_inputs", steps=0)
+        except (OSError, ValueError) as exc:
+            st.error(f"Could not create the case study: {exc}")
             return
         activate_project(st.session_state, workspace.resolve())
         st.session_state["nav_target"] = "Data QC"
         st.rerun()
-    if not project_root:
-        st.info("Create or open a project from the sidebar.")
-        return
 
+
+def render(project_root: str | None) -> None:
+    render_page_header("Dashboard", "Prepare well data, build an interpretation, then steer and review a run.")
+    if not project_root:
+        with st.container(border=True):
+            st.subheader("Start with your data")
+            st.write("Open a saved project or create an empty project, then import your well folders.")
+            _link("Open or create a project", "Project Workspace", primary=True)
+        with st.container(border=True):
+            st.subheader("Explore the example")
+            _case_study_loader()
+        return
     root = Path(project_root)
     if not (root / "project.json").exists():
         st.warning("Selected project root does not contain project.json.")
+        _link("Choose a project", "Project Workspace")
         return
-
     project, wells = load_project_and_wells(root)
+    valid_count = sum(w.qc_summary.get("valid") is True for w in wells)
+    a, b = st.columns(2)
+    a.metric("Imported wells", len(wells))
+    b.metric("Wells passing QC", f"{valid_count} / {len(wells)}")
+    if not wells:
+        st.info("This project is empty. Import well folders to begin.")
+        _link("Import well data", "Import Data", primary=True)
+        return
+    st.subheader("Project workflow")
+    for column, title, description, actions in zip(
+        st.columns(3),
+        ["1 · Prepare data", "2 · Interpret and steer", "3 · Review and export"],
+        ["Check imported wells, depth coverage and logs.",
+         "Tie offset markers, save a plan and work through acquired observations.",
+         "Revisit decisions, compare runs and export their evidence."],
+        [[("Review Data QC", "Data QC"), ("Inspect Well Logs", "Well Viewer"), ("Import more wells", "Import Data")],
+         [("Open Correlation", "Correlation Panel"), ("Open Planning", "Planning"), ("Open Steering", "Steering Console")],
+         [("Decision Review", "Decision Review"), ("Run Comparison", "Run Comparison"), ("Evaluation", "Evaluation"), ("Report Export", "Report Export")]],
+    ):
+        with column, st.container(border=True):
+            st.markdown(f"**{title}**")
+            st.caption(description)
+            for label, page in actions:
+                _link(label, page)
+    st.subheader("Imported wells")
     rows = []
-    valid_qc_count = 0
-    for w in wells:
-        qc = w.qc_summary or {}
-        if qc.get("valid") is True:
-            valid_qc_count += 1
-        markers_count = 0
-        if w.markers_path:
-            markers_file = root / w.markers_path
-            if markers_file.exists():
-                markers_count = len(read_json(markers_file, default=[]))
-        rows.append(
-            {
-                "well_name": w.name,
-                "survey_loaded": bool(w.survey_path),
-                "curves_present": ", ".join(sorted(w.curve_inventory.keys())),
-                "markers_count": markers_count,
-                "qc_valid": qc.get("valid", None),
-            }
-        )
-    active_well_name = next((w.name for w in wells if w.well_id == project.active_well_id), "Not set")
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Project", project.name)
-    m2.metric("Wells", str(len(wells)))
-    m3.metric("QC Valid", f"{valid_qc_count}/{len(wells)}")
-    m4.metric("Active Well", active_well_name)
-
-    st.markdown("#### Wells Summary")
+    for well in wells:
+        markers = read_json(root / well.markers_path, default=[]) if well.markers_path else []
+        rows.append({
+            "Well": well.name, "Role": "Active" if well.well_id == project.active_well_id else "Offset / available",
+            "Curves": ", ".join(sorted(well.curve_inventory)), "Markers": len(markers),
+            "QC": "Pass" if well.qc_summary.get("valid") else "Review",
+        })
     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-
-    st.markdown("#### Workflow Shortcuts")
-    c5, c6, c7, c8 = st.columns(4)
-    if c5.button("Go to Data QC"):
-        st.session_state["nav_target"] = "Data QC"
-        st.rerun()
-    if c6.button("Go to Correlation"):
-        st.session_state["nav_target"] = "Correlation Panel"
-        st.rerun()
-    if c7.button("Go to Planning"):
-        st.session_state["nav_target"] = "Planning"
-        st.rerun()
-    if c8.button("Go to Steering"):
-        st.session_state["nav_target"] = "Steering Console"
-        st.rerun()
-
-    st.markdown("#### Review the evidence")
-    st.caption("Inspect a recorded decision, compare branches from a common prefix, or evaluate a completed run.")
-    for column, label, page in zip(st.columns(3), ("Decision Review", "Run Comparison", "Evaluation"),
-                                    ("Decision Review", "Run Comparison", "Evaluation")):
-        if column.button(label, use_container_width=True):
-            st.session_state["nav_target"] = page
-            st.rerun()
+    with st.expander("Project location and reference studies"):
+        st.code(str(root.resolve()), language=None)
+        _case_study_loader()
+        st.caption("Explore paired strategies under changed geology and imperfect sensors, including failure cases.")
+        _link("Explore Robustness Study", "Robustness Study")

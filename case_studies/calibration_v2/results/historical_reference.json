@@ -1,0 +1,38 @@
+{
+  "case_id": "eval_bias",
+  "ensemble_seed": 907001,
+  "evidence_status": "diagnostic_reused",
+  "manifest_sha256": "2ae18d4b0524e3e8421ad16c966abee65b757c3640b4a12e65ba9a7f0e203a36",
+  "metrics": {
+    "forecast_250": {
+      "coverage_pct": 96.875,
+      "covered_count": 93,
+      "mean_abs_center_error_ft": 4.839863557692723,
+      "mean_width_ft": 17.175233401196834,
+      "point_count": 96
+    },
+    "forecast_500": {
+      "coverage_pct": 97.8021978021978,
+      "covered_count": 89,
+      "mean_abs_center_error_ft": 6.0466805555641026,
+      "mean_width_ft": 25.989369085790017,
+      "point_count": 91
+    },
+    "posterior_current": {
+      "coverage_pct": 2.9702970297029703,
+      "covered_count": 3,
+      "mean_abs_center_error_ft": 3.990906538939685,
+      "mean_width_ft": 5.2998613181266165,
+      "point_count": 101
+    },
+    "prior_current": {
+      "coverage_pct": 63.366336633663366,
+      "covered_count": 64,
+      "mean_abs_center_error_ft": 4.003176127389488,
+      "mean_width_ft": 8.891901381104752,
+      "point_count": 101
+    }
+  },
+  "seed": 7001,
+  "summary_sha256": "f165d8d208c6b4d7dddebde83f8a990f9fd53fb01620cd69c18d7ae62dbb0318"
+}

@@ -9,7 +9,7 @@ def activate_project(session, project_root):
     changed = previous is None or Path(previous).resolve() != Path(root).resolve()
     if changed:
         for key in list(session):
-            if key.startswith(("planning_", "corr_", "steering_run_", "report_", "review_", "run_compare_", "decision_review_", "comparison_", "evaluation_", "uncertainty_", "_selected_run_context_")) or key in {
+            if key.startswith(("planning_", "corr_", "steering_run_", "report_", "review_", "run_compare_", "decision_review_", "comparison_", "evaluation_", "uncertainty_", "_selected_run_context_", "import_", "viewer_", "chart_", "command_")) or key in {
                 "nav_target", "import_well_folder", "import_well_name",
             }:
                 del session[key]

@@ -9,213 +9,125 @@ import streamlit as st
 
 
 def _apply_plotly_theme() -> None:
-    if "geosteering_theme" in pio.templates:
-        pio.templates.default = "geosteering_theme"
-        return
-
-    layout = go.Layout(
-        font={"family": "IBM Plex Sans", "color": "#16323f", "size": 13},
-        paper_bgcolor="rgba(255,255,255,0.92)",
-        plot_bgcolor="rgba(248,251,252,1.0)",
-        colorway=["#0f766e", "#b45309", "#1d4ed8", "#be123c", "#0e7490"],
-        legend={"orientation": "h", "y": 1.02, "x": 0.0},
-        margin={"l": 30, "r": 20, "t": 40, "b": 30},
-    )
-    template = go.layout.Template(layout=layout)
-    template.layout.xaxis = {"gridcolor": "#dce6ea", "zeroline": False}
-    template.layout.yaxis = {"gridcolor": "#dce6ea", "zeroline": False}
-    pio.templates["geosteering_theme"] = template
+    if "geosteering_theme" not in pio.templates:
+        layout = go.Layout(
+            font={"family": "Segoe UI, Arial, sans-serif", "color": "#16323f", "size": 13},
+            paper_bgcolor="#ffffff", plot_bgcolor="#f8fbfc",
+            colorway=["#0f766e", "#b45309", "#1d4ed8", "#be123c", "#0e7490"],
+            legend={"orientation": "h", "y": 1.02, "x": 0.0},
+            margin={"l": 55, "r": 25, "t": 60, "b": 60},
+        )
+        template = go.layout.Template(layout=layout)
+        template.layout.xaxis = {"gridcolor": "#dce6ea", "zeroline": False, "automargin": True}
+        template.layout.yaxis = {"gridcolor": "#dce6ea", "zeroline": False, "automargin": True}
+        pio.templates["geosteering_theme"] = template
     pio.templates.default = "geosteering_theme"
 
 
 def apply_theme() -> None:
     _apply_plotly_theme()
+    # Leave header positioning and scroll containers to Streamlit. In particular,
+    # do not clip the dataframe wrapper: it contains its own scrollbars/toolbars.
     st.markdown(
         """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
 :root {
-  --gs-ink: #14303d;
-  --gs-muted: #5f7280;
-  --gs-surface: rgba(255, 255, 255, 0.84);
-  --gs-surface-strong: #ffffff;
-  --gs-accent: #0f766e;
-  --gs-accent-soft: #dff5f2;
-  --gs-warn: #b45309;
-  --gs-danger: #be123c;
-  --gs-border: #d7e3e8;
-  --gs-header-offset: 3.25rem;
+  --gs-border: color-mix(in srgb, currentColor 20%, transparent);
 }
-
 html, body, [class*="stApp"] {
-  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
-  color: var(--gs-ink);
+  font-family: "Segoe UI", Arial, sans-serif;
 }
-
-[data-testid="stAppViewContainer"] {
-  background:
-    radial-gradient(1200px 600px at 95% -5%, #d8edf5 0%, rgba(216, 237, 245, 0) 60%),
-    radial-gradient(900px 500px at -10% 105%, #f9e9d6 0%, rgba(249, 233, 214, 0) 55%),
-    linear-gradient(180deg, #f6fbfd 0%, #eef5f8 100%);
-}
-
 .block-container {
-  padding-top: calc(var(--gs-header-offset) + 1rem);
-  padding-bottom: 2rem;
+  padding-top: 4.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 4rem;
+  max-width: 1600px;
 }
-
-header[data-testid="stHeader"] {
-  background: rgba(246, 251, 253, 0.92);
-  height: var(--gs-header-offset);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  backdrop-filter: blur(6px);
+[data-testid="stMain"] { container-type: inline-size; }
+[data-testid="stSidebar"] {
+  border-right: 1px solid var(--gs-border);
 }
-
-div[data-testid="stToolbar"] {
-  top: 0.4rem;
-  right: 0.6rem;
-}
-
-section.main {
-  padding-top: 0;
-}
-
-section[data-testid="stSidebar"] {
-  padding-top: var(--gs-header-offset);
-}
-
-section[data-testid="stSidebar"] {
-  background: linear-gradient(180deg, #17344a 0%, #1f475d 100%);
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-section[data-testid="stSidebar"] :is(h1, h2, h3, label, p, summary) {
-  color: #eef7fb !important;
-}
-
-section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
-  color: #deecf3 !important;
-}
-
-section[data-testid="stSidebar"] :is(input, textarea) {
-  color: var(--gs-ink) !important;
-}
-
-section[data-testid="stSidebar"] [data-testid="stRadio"] label {
-  padding: 0.3rem 0;
-}
-
-section[data-testid="stSidebar"] [data-testid="stAlert"] p {
-  color: var(--gs-ink) !important;
-}
-
-button:focus-visible, input:focus-visible, textarea:focus-visible {
-  outline: 3px solid #d97706 !important;
+[data-testid="stSidebar"] [data-testid="stRadio"] label { padding: 0.25rem 0; }
+[data-testid="stColumn"] { min-width: 0; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, [role="tab"]:focus-visible {
+  outline: 3px solid #b45309 !important;
   outline-offset: 3px;
 }
-
-h1, h2, h3 {
-  letter-spacing: -0.01em;
-  color: var(--gs-ink);
+h1, h2, h3 { letter-spacing: -0.015em; }
+.gs-project-context {
+  color: inherit;
+  font-size: 0.875rem;
+  padding-bottom: 0.7rem;
+  overflow-wrap: anywhere;
 }
-
 .gs-hero {
-  background: linear-gradient(125deg, #ffffff 0%, #f2faf8 52%, #f8efe4 100%);
-  border: 1px solid var(--gs-border);
-  border-radius: 18px;
-  padding: 1rem 1.2rem;
-  box-shadow: 0 10px 30px rgba(15, 42, 54, 0.08);
-  margin-bottom: 1rem;
-  animation: gsFadeUp .45s ease-out both;
+  border-bottom: 1px solid var(--gs-border);
+  padding: 0 0 0.9rem;
+  margin-bottom: 0.75rem;
+  overflow-wrap: anywhere;
 }
-
-.gs-hero-title {
+.gs-hero h1.gs-hero-title {
   margin: 0;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--gs-ink);
+  padding: 0;
+  font-size: 1.7rem;
+  font-weight: 650;
+  color: inherit;
 }
-
-.gs-hero-subtitle {
-  margin: 0.3rem 0 0.75rem 0;
-  color: var(--gs-muted);
-  font-size: 0.96rem;
-}
-
-.gs-chip-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
+.gs-hero-subtitle { margin: 0.35rem 0 0; color: inherit; }
+.gs-chip-wrap { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.5rem; }
 .gs-chip {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  border: 1px solid #cde4ea;
-  background: #f7fcfd;
-  color: #1d4050;
-  font-size: 0.78rem;
-  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--gs-border);
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
 }
-
 [data-testid="stMetric"] {
-  background: var(--gs-surface);
   border: 1px solid var(--gs-border);
-  border-radius: 14px;
-  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  padding: 0.65rem 0.8rem;
+  min-width: 0;
 }
-
-[data-testid="stDataFrame"] {
-  border: 1px solid var(--gs-border);
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--gs-surface-strong);
+[data-testid="stMetricLabel"] p,
+[data-testid="stMetricValue"] > div {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
 }
-
-.stButton > button {
-  border-radius: 10px;
-  border: 1px solid #0b5f59;
-  background: linear-gradient(180deg, #0f766e 0%, #0e625b 100%);
-  color: #f8fffe;
-  font-weight: 600;
-}
-
-.stButton > button:hover {
-  border-color: #0f766e;
-  background: linear-gradient(180deg, #11867d 0%, #0f766e 100%);
-}
-
-code, pre, kbd {
-  font-family: "IBM Plex Mono", monospace !important;
-}
-
-@keyframes gsFadeUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 900px) {
-  .gs-hero { padding: 0.9rem 0.9rem; }
-  .gs-hero-title { font-size: 1.15rem; }
-}
-
-@media (min-width: 641px) and (max-width: 1100px) {
-  [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; }
-  [data-testid="stColumn"] {
-    flex: 1 1 230px !important;
-    min-width: min(230px, 100%) !important;
-    width: auto !important;
+[data-testid="stMetricValue"] { font-size: clamp(1.25rem, 2.4vw, 2rem); }
+[data-testid="stButton"] button,
+[data-testid="stDownloadButton"] button,
+[data-testid="stFormSubmitButton"] button { border-radius: 7px; min-height: 2.6rem; }
+[data-testid="stButton"] button p,
+[data-testid="stDownloadButton"] button p { white-space: normal; overflow-wrap: anywhere; }
+/* Keep workspace charts alongside longer editing forms without nested scrolling. */
+@container (min-width: 601px) {
+  .st-key-steering_workspace [data-testid="stColumn"]:has(.st-key-steering_charts),
+  .st-key-corr_workspace [data-testid="stColumn"]:has(.st-key-corr_charts),
+  .st-key-planning_workspace [data-testid="stColumn"]:has(.st-key-planning_charts) {
+    position: sticky;
+    top: 4rem;
+    align-self: flex-start;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .gs-hero { animation: none; }
+/* Respond to usable content width, including when the sidebar is open. */
+@container (max-width: 900px) {
+  [data-testid="stHorizontalBlock"] { flex-wrap: wrap; }
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 260px;
+    min-width: min(260px, 100%);
+    width: auto;
+  }
+}
+@container (max-width: 600px) {
+  [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+}
+@media (max-width: 640px) {
+  .block-container { padding-left: 1rem; padding-right: 1rem; }
+  .gs-hero h1.gs-hero-title { font-size: 1.35rem; }
 }
 </style>
         """,
@@ -224,16 +136,10 @@ code, pre, kbd {
 
 
 def render_page_header(title: str, subtitle: str | None = None, chips: Sequence[str] | None = None) -> None:
-    safe_title = escape(title)
-    safe_subtitle = escape(subtitle or "")
     chips_markup = "".join(f'<span class="gs-chip">{escape(c)}</span>' for c in (chips or []))
     st.markdown(
-        f"""
-<div class="gs-hero">
-  <p class="gs-hero-title">{safe_title}</p>
-  <p class="gs-hero-subtitle">{safe_subtitle}</p>
-  <div class="gs-chip-wrap">{chips_markup}</div>
-</div>
-        """,
+        f'<div class="gs-hero"><h1 class="gs-hero-title">{escape(title)}</h1>'
+        f'<p class="gs-hero-subtitle">{escape(subtitle or "")}</p>'
+        f'<div class="gs-chip-wrap">{chips_markup}</div></div>',
         unsafe_allow_html=True,
     )

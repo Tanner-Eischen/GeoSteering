@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import math
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 class EnsembleSettings(BaseModel):
@@ -77,4 +78,88 @@ class EnsembleState(BaseModel):
             raise ValueError("Recorded ESS does not match the posterior weights")
         if self.step_index is not None and (type(self.step_index) is not int or self.step_index < 0):
             raise ValueError("Ensemble step index must be nonnegative")
+        return self
+
+
+class CalibrationSettings(EnsembleSettings):
+    """Declared fixed calibration sensitivity hypotheses, never learned weights."""
+
+    version: Literal["spatial-calibration-v2"] = "spatial-calibration-v2"
+    calibration_biases_api: tuple[float, ...] = (-16.0, -8.0, 0.0, 8.0, 16.0)
+
+    @field_validator("calibration_biases_api", mode="before")
+    @classmethod
+    def fixed_biases(cls, value):
+        if not isinstance(value, (list, tuple)) or not 1 <= len(value) <= 9:
+            raise ValueError("Declare one to nine calibration bias hypotheses")
+        if any(type(item) not in {int, float} or not math.isfinite(item) for item in value):
+            raise ValueError("Calibration biases must be finite numeric values")
+        biases = tuple(float(item) for item in value)
+        if tuple(sorted(set(biases))) != biases or 0.0 not in biases:
+            raise ValueError("Calibration biases must be sorted, unique and include zero")
+        if any(abs(item) > 40 for item in biases):
+            raise ValueError("Calibration biases must lie within -40 to +40 API")
+        return biases
+
+    @model_validator(mode="after")
+    def nominal_calibration(self):
+        if self.sensor_center_api != 80.0:
+            raise ValueError("Calibration v2 uses the declared nominal 80 API center")
+        return self
+
+    def conditional_settings(self, bias_api: float) -> EnsembleSettings:
+        payload = self.model_dump(exclude={"calibration_biases_api"})
+        payload.update(version="spatial-particle-v1", sensor_center_api=80.0 + bias_api)
+        return EnsembleSettings.model_validate(payload)
+
+
+class CalibrationComponent(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+    bias_api: float
+    weight: float = Field(gt=0, le=1)
+    ensemble: EnsembleState
+
+
+class CalibrationState(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+    version: Literal["spatial-calibration-state-v2"] = "spatial-calibration-state-v2"
+    settings: CalibrationSettings
+    seed: int = Field(ge=0, strict=True)
+    x_ft: float = Field(ge=0)
+    step_index: int | None = Field(default=None, ge=0, strict=True)
+    last_observation_md_ft: float | None = Field(default=None, ge=0)
+    update_count: int = Field(default=0, ge=0, strict=True)
+    components: list[CalibrationComponent] = Field(min_length=1, max_length=9)
+    ess: float = Field(gt=0)
+    resampled: bool = False
+    last_update: dict = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def consistent_components(self):
+        biases = self.settings.calibration_biases_api
+        if tuple(component.bias_api for component in self.components) != biases:
+            raise ValueError("Calibration components must match the declared ordered bias hypotheses")
+        weight = 1.0 / len(biases)
+        reference_prior = self.components[0].ensemble.thickness_prior_ft
+        reference_thickness = self.components[0].ensemble.prior_thickness_mean_ft
+        for component in self.components:
+            state = component.ensemble
+            if component.weight != weight:
+                raise ValueError("Calibration hypothesis weights are fixed equal weights and cannot be learned")
+            expected = self.settings.conditional_settings(component.bias_api)
+            if state.settings != expected:
+                raise ValueError("Calibration component settings differ from the declared conditional sensor model")
+            if (state.seed, state.x_ft, state.step_index, state.last_observation_md_ft, state.update_count) != (
+                self.seed, self.x_ft, self.step_index, self.last_observation_md_ft, self.update_count,
+            ):
+                raise ValueError("Calibration component seed or observation timing does not match its enclosing state")
+            if state.thickness_prior_ft != reference_prior or state.prior_thickness_mean_ft != reference_thickness:
+                raise ValueError("Calibration components must share the same independent thickness prior")
+        expected_ess = min(component.ensemble.ess for component in self.components)
+        if self.ess != expected_ess:
+            raise ValueError("Calibration ESS must report the minimum conditional posterior ESS")
+        if self.resampled != any(component.ensemble.resampled for component in self.components):
+            raise ValueError("Calibration resampling status does not match its conditional ensembles")
         return self

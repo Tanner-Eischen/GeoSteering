@@ -12,7 +12,7 @@ from statistics import NormalDist
 
 import numpy as np
 
-from app.uncertainty.models import EnsembleSettings, EnsembleState
+from app.uncertainty.models import CalibrationSettings, EnsembleSettings, EnsembleState
 
 _NAMESPACE = 0x47535046  # Separate from every synthetic-instrument random stream.
 _QUANTILES = (0.05, 0.50, 0.95)
@@ -88,6 +88,9 @@ def _thickness_prior(mean, relative_std):
 
 
 def initialize_ensemble(top_points, base_points, x_ft, settings=None, seed=123):
+    if isinstance(settings, CalibrationSettings) or isinstance(settings, dict) and settings.get("version") == "spatial-calibration-v2":
+        from app.uncertainty.calibration import initialize_calibration
+        return initialize_calibration(top_points, base_points, x_ft, settings, seed)
     settings = EnsembleSettings.model_validate(settings.model_dump() if isinstance(settings, EnsembleSettings) else settings or {})
     seed = _counter(seed, "Seed")
     x = _finite(x_ft, "Initial x")
@@ -155,6 +158,9 @@ def update_ensemble(state, x_ft, tvd_ft, gr_api, observation_md_ft, step_index):
     First observation may share the initialization x; subsequent x and MD must
     advance strictly, preventing duplicate measurements from adding likelihood.
     """
+    if isinstance(state, dict) and state.get("version") == "spatial-calibration-state-v2":
+        from app.uncertainty.calibration import update_calibration
+        return update_calibration(state, x_ft, tvd_ft, gr_api, observation_md_ft, step_index)
     current = EnsembleState.model_validate(state)
     settings, count = current.settings, current.settings.member_count
     x, tvd, md = _finite(x_ft, "Observation x"), _finite(tvd_ft, "Observation TVD"), _finite(observation_md_ft, "Observation MD")
@@ -265,6 +271,9 @@ def forecast_ensemble(state, x_grid, seed_key=0):
     be nondecreasing and lie between current x and current x + 500 ft. No sensor
     measurements are generated and no observation likelihood is added.
     """
+    if isinstance(state, dict) and state.get("version") == "spatial-calibration-state-v2":
+        from app.uncertainty.calibration import forecast_calibration
+        return forecast_calibration(state, x_grid, seed_key)
     current = EnsembleState.model_validate(state)
     key = _counter(seed_key, "Forecast seed key")
     queries = np.atleast_1d(np.asarray(x_grid, dtype=float))
@@ -310,6 +319,9 @@ def target_probability(forecast, x_index, tvd_ft):
 
 def summarize_ensemble(state, x_grid=None, bit_tvd_ft=None):
     """Weighted nominal 90% model intervals, with optional target probability."""
+    if isinstance(state, dict) and state.get("version") == "spatial-calibration-state-v2":
+        from app.uncertainty.calibration import summarize_calibration
+        return summarize_calibration(state, x_grid, bit_tvd_ft)
     current = EnsembleState.model_validate(state)
     if x_grid is None:
         # Current summaries use the exact saved posterior weights, without
@@ -327,3 +339,13 @@ def summarize_ensemble(state, x_grid=None, bit_tvd_ft=None):
             raise ValueError("Bit TVD must be scalar or match the x grid")
         summary["in_zone_probability"] = [target_probability(summary, index, depth) for index, depth in enumerate(depths)]
     return summary
+
+
+def target_probability_range(forecast, x_index, tvd_ft):
+    """Conditional probability sensitivity across fixed calibration hypotheses."""
+    components = forecast.get("calibration_components")
+    if not components:
+        value = target_probability(forecast, x_index, tvd_ft)
+        return value, value
+    values = [target_probability(component["forecast"], x_index, tvd_ft) for component in components]
+    return min(values), max(values)

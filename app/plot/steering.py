@@ -55,9 +55,10 @@ def build_command_preview_figure(trajectory, preview, interpretation) -> go.Figu
     fig.add_trace(go.Scatter(x=[previous["x_ft"], station["x_ft"]],
                              y=[previous["tvd_ft"], station["tvd_ft"]], mode="lines+markers",
                              name="Next station projection", line={"color": "#b45309", "width": 3, "dash": "dash"}))
-    fig.update_layout(height=340, margin={"l": 15, "r": 15, "t": 15, "b": 110},
-                      legend={"orientation": "h", "y": -0.45, "x": 0, "yanchor": "top"},
+    fig.update_layout(height=400, margin={"l": 55, "r": 25, "t": 85, "b": 55},
+                      legend={"orientation": "h", "y": 1.02, "x": 0, "yanchor": "bottom"},
                       xaxis_title="Along-section x (ft)")
-    fig.update_yaxes(autorange="reversed", title_text="TVD (ft), positive down")
+    fig.update_xaxes(automargin=True)
+    fig.update_yaxes(autorange="reversed", title_text="TVD (ft), positive down", automargin=True)
     return fig
 

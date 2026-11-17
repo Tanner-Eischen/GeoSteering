@@ -54,6 +54,8 @@ where = ["."]
 include = ["app*", "tools*"]
 
 [tool.setuptools.data-files]
+"share/geosteering/case_studies/calibration_v2" = ["case_studies/calibration_v2/*.json", "case_studies/calibration_v2/*.md"]
+"share/geosteering/case_studies/calibration_v2/results" = ["case_studies/calibration_v2/results/*.json", "case_studies/calibration_v2/results/*.csv", "case_studies/calibration_v2/results/*.png", "case_studies/calibration_v2/results/*.gz", "case_studies/calibration_v2/results/*.zip", "case_studies/calibration_v2/results/*.md"]
 "share/geosteering/case_studies/uncertainty_v1" = ["case_studies/uncertainty_v1/*.json", "case_studies/uncertainty_v1/*.md"]
 "share/geosteering/case_studies/uncertainty_v1/results" = ["case_studies/uncertainty_v1/results/*.json", "case_studies/uncertainty_v1/results/*.csv", "case_studies/uncertainty_v1/results/*.png", "case_studies/uncertainty_v1/results/*.gz", "case_studies/uncertainty_v1/results/*.zip", "case_studies/uncertainty_v1/results/*.md"]
 "share/geosteering/case_studies/robustness_v1" = ["case_studies/robustness_v1/*.json", "case_studies/robustness_v1/*.md"]

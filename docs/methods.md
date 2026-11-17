@@ -81,7 +81,7 @@ Estimated-zone length metrics integrate the piecewise-linear trajectory and inte
 
 The nonlinear truth field is evaluated only after completion, using a disclosed fine MD integration grid with crossing interpolation and refinement tests. Reports distinguish lateral DLS from the higher landing curvature. Interpretation residuals compare the offset baseline and final estimate with the same independent field; a failed or uncertain estimate is reported as such.
 
-## Optional spatial uncertainty ensemble
+## Original spatial uncertainty ensemble (v1)
 
 The opt-in ensemble is a sequential particle model, separate from manual
 interpretation versions and their assumed uncertainty band. Its structure follows
@@ -126,6 +126,46 @@ not calibrated success probabilities. The separate `uncertainty_v1` protocol
 measures pre/post observation center coverage, width and valid-domain 250/500-ft
 forecasts, retaining the calibration-bias failure. No interval level or model
 setting was tuned to its evaluation outcomes.
+
+## Persistent calibration sensitivity (v2)
+
+The original `spatial-particle-v1` settings and state formats remain unchanged.
+New `spatial-calibration-v2` runs contain separate conditional filters. For
+each fixed bias hypothesis b, the latent response is
+`clip(80 + b + 2 * (TVD - center), 20, 160)` API. Observation noise is added
+after clipping. Each filter receives the same acquired GR, physical offset
+prior and random-stream keys. Shifting already clipped observations is not
+equivalent to this model and is not used.
+
+The default five hypotheses are -16, -8, 0, 8 and 16 API with equal external
+weights. The support was chosen after the v1 failure became known. It is an
+empirical sensitivity range, not an independently calibrated bias distribution.
+GR updates only within-hypothesis particle weights. External hypothesis masses
+never collapse, resample or learn from GR. This deliberate separation prevents
+the confounded geological likelihood from certifying its own calibration.
+
+Pooled particle weights are external hypothesis mass times the conditional
+particle weight. Mixture quantiles are inverse weighted empirical-CDF quantiles
+of that combined distribution, not averages of conditional quantiles. Thickness
+retains the original independent quadrature prior. The separate calibration
+envelope takes the minimum conditional 5th percentile and maximum conditional
+95th percentile at each location. It is a union of conditional intervals,
+not an unconditional calibrated 90% confidence region. The median shown with
+that envelope is the mixture median.
+
+Target-probability ranges are the minimum and maximum conditional probabilities;
+the separately labeled pooled probability assumes the fixed external weights.
+Each command uses the same conditional forecast draws. The reported minimum
+effective model count describes within-hypothesis concentration and cannot be
+interpreted as evidence that a calibration assumption is correct.
+
+The distinct `calibration_v2` protocol pairs original and new filters on identical
+observations. Historical failures are development diagnostics. New evaluation
+configurations and seeds are frozen before any outcomes are read, and an
+outside-support bias case tests the limits of the assumed range. Coverage and
+width are reported separately for original nominal intervals, pooled nominal
+intervals and sensitivity envelopes. Truth is consulted only after all updates
+and predictions. Existing study artifacts remain immutable.
 
 ## Reproducibility
 

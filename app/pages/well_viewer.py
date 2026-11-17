@@ -8,6 +8,7 @@ import streamlit as st
 
 from app.plot.log_tracks import build_log_tracks_figure
 from app.services.project_data import load_project_and_wells, load_simulation_revealed_md, load_well_frames
+from app.ui.charts import render_chart
 from app.ui.theme import render_page_header
 
 
@@ -121,13 +122,25 @@ def render(project_root: str | None) -> None:
 
     depth_min = None
     depth_max = None
+    if not selected_curves:
+        st.info("Select at least one curve to display the log tracks.")
+        return
+
     if depth_mode == "Last 1000 ft":
         depth_max = float(logs["md_ft"].max())
         depth_min = max(float(logs["md_ft"].min()), depth_max - 1000.0)
     elif depth_mode == "Custom":
         c1, c2 = st.columns(2)
-        depth_min = c1.number_input("Depth Min (ft)", value=float(logs["md_ft"].min()))
-        depth_max = c2.number_input("Depth Max (ft)", value=float(logs["md_ft"].max()))
+        depth_min = c1.number_input("Depth Min (ft)", value=float(logs["md_ft"].min()), key=f"viewer_{selected_well_id}_depth_min")
+        depth_max = c2.number_input("Depth Max (ft)", value=float(logs["md_ft"].max()), key=f"viewer_{selected_well_id}_depth_max")
+
+    if depth_min is not None and depth_max is not None:
+        if depth_min >= depth_max:
+            st.warning("Depth minimum must be smaller than depth maximum.")
+            return
+        if not logs["md_ft"].between(depth_min, depth_max).any():
+            st.info("No acquired samples in this depth range. Choose Full or adjust the depth limits.")
+            return
 
     x_ranges: dict[str, tuple[float, float]] = {}
     exclude_outliers = False
@@ -158,7 +171,7 @@ def render(project_root: str | None) -> None:
                         max_value=float(vmax),
                         value=(float(low), float(high)),
                         step=step,
-                        key=f"range_{curve}",
+                        key=f"viewer_{selected_well_id}_range_{curve}_{depth_min}_{depth_max}",
                     )
                     x_ranges[curve] = (float(10 ** selected[0]), float(10 ** selected[1]))
                     st.caption(f"{curve} range: {10 ** selected[0]:.3g} to {10 ** selected[1]:.3g}")
@@ -170,7 +183,7 @@ def render(project_root: str | None) -> None:
                         max_value=float(vmax),
                         value=(float(low), float(high)),
                         step=step,
-                        key=f"range_{curve}",
+                        key=f"viewer_{selected_well_id}_range_{curve}_{depth_min}_{depth_max}",
                     )
                     x_ranges[curve] = (float(selected[0]), float(selected[1]))
 
@@ -187,7 +200,7 @@ def render(project_root: str | None) -> None:
     tab1, tab2 = st.tabs(["Logs", "Trajectory"])
     with tab1:
         st.markdown("#### Log Tracks")
-        st.plotly_chart(fig, use_container_width=True)
+        render_chart(fig, key="viewer_logs")
         if "RES" in selected_curves:
             st.caption(f"RES clipped (<=0): {meta.clipped_res_count}")
         if exclude_outliers and meta.excluded_by_curve:
@@ -200,16 +213,17 @@ def render(project_root: str | None) -> None:
             go.Scatter(
                 x=trajectory["md_ft"],
                 y=trajectory["tvd_ft"],
-                mode="lines",
+                mode="lines+markers" if len(trajectory) == 1 else "lines",
                 name="Trajectory",
                 line={"color": "#2e7d32"},
             )
         ]
     )
-    traj_fig.update_layout(height=360, xaxis_title="MD (ft)", yaxis_title="TVD (ft)")
+    traj_fig.update_layout(height=420, xaxis_title="MD (ft)", yaxis_title="TVD (ft)")
+    traj_fig.update_yaxes(autorange="reversed")
     with tab2:
         st.markdown("#### Trajectory Profile")
-        st.plotly_chart(traj_fig, use_container_width=True)
+        render_chart(traj_fig, key="viewer_trajectory")
 
     c4, c5 = st.columns(2)
     if c4.button("Open Correlation Panel"):

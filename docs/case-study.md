@@ -117,9 +117,9 @@ ranges describe variation within fixed geology. The sensor still supplies
 signed-distance information when valid, offset picks remain idealized, and no
 calibrated geological uncertainty distribution has been established.
 
-## A conditional uncertainty ensemble
+## The original conditional uncertainty ensemble
 
-New synthetic runs can opt into a 256-member spatial particle ensemble. The
+The original v1 model uses a 256-member spatial particle ensemble. The
 prior comes from the frozen offset model. Each acquired step uses at most one
 new located GR measurement at its original pose, updates member weights through
 the clipped forward sensor likelihood, and records an immutable snapshot.
@@ -171,6 +171,87 @@ checks reproducibility, not independent confirmation. This evidence makes the
 model's uncertainty assumptions testable and exposes substantial miscoverage.
 The earlier placement benchmarks remain unchanged.
 
+## Preserving unresolved sensor calibration
+
+The v1 failure is now development evidence for a model change. Adding more
+independent measurement noise cannot represent one calibration error shared by
+all observations. Away from clipping, a +8 API intercept error resembles a
+4-ft center shift under the 2 API/ft response. Repeated observations alone do
+not determine which interpretation is correct.
+
+New runs default to a separately versioned calibration-sensitivity ensemble.
+Five filters share the same physical offset prior and acquired observations,
+while assuming persistent biases of -16, -8, 0, 8 and 16 API. Each hypothesis
+changes the sensor intercept inside the clipped forward model. The app does
+not subtract bias from an already clipped observation. Conditional particles
+update within each filter; the external equal hypothesis weights stay fixed.
+Those weights express a declared sensitivity analysis, not learned calibration
+or a full Bayesian model comparison.
+
+The pooled nominal 90% interval uses the combined weighted particle distribution.
+The calibration envelope spans the conditional lower and upper interval bounds
+across hypotheses. The app distinguishes these two intervals, shows minimum
+conditional effective model count, and reports the range of conditional target
+probabilities for each command. A well-fitting hypothesis cannot erase the
+other calibration assumptions. At default settings this requires five sets of
+256 particles rather than one, increasing computation and saved-state size.
+
+This change preserves unresolved ambiguity rather than claiming to recover the
+true bias. Original v1 runs, settings, snapshots and study evidence remain
+unchanged. Neither the pooled interval nor the envelope is certified to achieve
+90% field coverage. Clipping, structural mismatch, sparse offset constraints,
+and calibration errors outside the declared support remain failure modes.
+
+The [paired calibration study](../case_studies/calibration_v2/PROTOCOL.md) freezes
+the new settings and source before execution. It reuses the historical +8 API
+failure only as a labeled development diagnostic. Fresh evaluation cases and
+seeds compare both models on exactly the same fixed-HOLD observations, including
+negative bias, bias between hypotheses and bias outside the assumed range.
+Coverage is reported alongside width and explicit forecast-domain counts.
+
+The completed study contains 20 pairs: two development diagnostics and 18 new
+evaluation pairs across six configurations. Both models use the same observations;
+the 40 model runs are not independent experiments. Equal-case current posterior
+results are:
+
+| Reported interval | Center coverage | Mean width |
+| --- | ---: | ---: |
+| Original v1 nominal 90% | 47.63% | 16.87 ft |
+| Fixed calibration mixture nominal 90% | 78.22% | 28.62 ft |
+| Calibration sensitivity envelope | 79.43% | 35.11 ft |
+
+![Paired calibration coverage and interval width](figures/calibration_coverage.png)
+
+This improvement comes from preserving a wider set of plausible positions.
+Mean median-center absolute error does not improve: 9.65 ft for v1 and 9.70 ft
+for v2. The reused +8 API/seed7001 diagnostic changes from 3/101 covered stations
+to 101/101 for both new interval types, while mean width increases from 5.30 ft
+to 18.19 ft for the mixture and 21.28 ft for the envelope. This repair informed
+development and is explicitly excluded from the fresh evaluation aggregate.
+
+The correction has a clear boundary. In the new +28 API case, outside the
+declared ±16 API support, all three interval types cover **0/101 posterior
+stations** in seed8101. The envelope averages 21.27 ft wide and its median
+remains about 14 ft wrong. Minimum conditional effective model count averages
+123.52, and no observation conflicts with every hypothesis's predictive interval.
+Internal fit still cannot establish calibration. Abrupt/saturated geology also
+under-covers: the envelope averages 76.57% current posterior coverage in that
+configuration. Both failures remain in the headline aggregate.
+
+![Reused diagnostic and new outside-support failure](figures/calibration_failure.png)
+
+Across the six fresh cases, 250-ft envelope coverage is 95.20% with 45.03-ft mean
+width, and 500-ft coverage is 95.18% with 52.82-ft width. Larger forecast widths
+can cover a biased center without improving the median. The respective 96 and
+91 valid targets per pair are scored only within the evaluated domain. These
+descriptive results do not establish nominal coverage for the envelope, validate
+thickness or turn conditional command probabilities into field guarantees.
+
+The [complete paired results](../case_studies/calibration_v2/README.md) retain
+all observations, interval summaries, paired differences, source/protocol hashes
+and failure diagnostics. The evaluated configurations are now observed and must
+not be reused as untouched validation after further model changes.
+
 ## Validation and reproduction
 
 ```powershell
@@ -181,6 +262,7 @@ python -m build
 python -m tools.run_case_study --out output/my-case-study --seed 123
 python -m tools.run_robustness_study --out output/my-robustness-study
 python -m tools.run_uncertainty_study --out output/my-uncertainty-study
+python -m tools.run_calibration_study --out output/my-calibration-study
 ```
 
 Use a fresh output directory. The report, numerical summary, decision CSV, plan CSV and artifact manifest are under the generated project exports. The run manifest identifies input hashes, seed, scenario version, code revision and coordinate reference. Automated tests independently check geometry, interval scoring, information isolation, history, reproducibility, bounded causal consequences, PDF text and embedded images.

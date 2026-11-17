@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.model.schemas import PrejobModel
-from app.uncertainty.models import EnsembleSettings
+from app.uncertainty.models import CalibrationSettings, EnsembleSettings
 
 
 class SimulationConfig(BaseModel):
@@ -25,11 +25,20 @@ class SimulationConfig(BaseModel):
     seed: int = 123
     plan_id: str | None = None
     geological_model: PrejobModel | None = None
-    ensemble_settings: EnsembleSettings | None = None
+    ensemble_settings: Annotated[EnsembleSettings | CalibrationSettings, Field(discriminator="version")] | None = None
     guided: bool = True
     max_dls_deg_per_100ft: float = Field(default=3.0, gt=0)
     hidden_truth_path: str | None = None
     use_default_synthetic_scenario: bool = False
+
+    @field_validator("ensemble_settings", mode="before")
+    @classmethod
+    def preserve_legacy_ensemble_version(cls, value):
+        # Older callers may omit the v1 default tag. Absence never opts an old
+        # history into the new calibration-hypothesis model.
+        if isinstance(value, dict) and "version" not in value:
+            return {"version": "spatial-particle-v1", **value}
+        return value
 
     @model_validator(mode="after")
     def validate_interval(self) -> SimulationConfig:
